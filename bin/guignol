@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+#
+# Run Guignol commands
+#
+File.expand_path(__FILE__ + '/../../lib').tap { |libdir| $:.include?(libdir) or $:.unshift(libdir) }
+
+
+# Work around SSL certificate errors. Yeah, I know it's insecure.
+require 'excon'
+Excon.defaults[:ssl_verify_peer] = false
+
+
+require 'guignol/shell'
+
+command = ARGV.shift
+Guignol::Shell.instance.execute(command, ARGV)
