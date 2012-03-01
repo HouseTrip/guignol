@@ -27,6 +27,7 @@
 
 require 'guignol/commands/base'
 require 'guignol/instance'
+require 'term/ansicolor'
 
 module Guignol::Commands
   class List < Base
@@ -37,11 +38,22 @@ module Guignol::Commands
 
     def run_on_server(config)
       instance = Guignol::Instance.new(config)
-      puts "%s: %s" % [instance.name, instance.state]
+      puts "%s:\t%s" % [instance.name, colorize(instance.state)]
     end
 
     def self.short_usage
       ["[regexp]", "List known instances (matching the regexp) and their status."]
+    end
+
+  private
+
+    def colorize(state)
+      case state
+        when 'running'     then Term::ANSIColor.green(state)
+        when 'stopped'     then Term::ANSIColor.yellow(state)
+        when 'nonexistent' then Term::ANSIColor.red(state)
+        else state
+      end
     end
   end
 end
