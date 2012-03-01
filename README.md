@@ -2,6 +2,7 @@
 
 Be the puppeteer. Order your EC2 instances to start, stop, die, or be created from the command line. Let Guignol deal with DNS mappings and attaching EBS volumes.
 
+Released under the [Simplified BSD License](http://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_.28.22Simplified_BSD_License.22_or_.22FreeBSD_License.22.29).
 
 
 ## Getting started
