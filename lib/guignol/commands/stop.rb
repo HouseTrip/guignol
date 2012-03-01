@@ -12,6 +12,10 @@ module Guignol::Commands
     def run_on_server(config)
       Guignol::Instance.new(config).stop
     end
+
+    def self.short_usage
+      ["<regexps>", "Stop instances (if they're running) and remove DNS"]
+    end
   end
 end
 

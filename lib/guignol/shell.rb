@@ -5,16 +5,13 @@ module Guignol
   class Shell
     include Singleton
 
-    Map = {
-      'create'     => Guignol::Commands::Create,
-      'kill'       => Guignol::Commands::Kill,
-      'start'      => Guignol::Commands::Start,
-      'stop'       => Guignol::Commands::Stop,
-    }
-
-    def execute(command_name, patterns)
-      command = Map[command_name] or die "no such command '#{command_name}'."
-      command.new(patterns).run
+    def execute(command_name, *argv)
+      command_name ||= 'help'
+      unless command = Commands::Map[command_name]
+        Commands::Help.new.run
+        die "no such command '#{command_name}'."
+      end
+      command.new(*argv).run
       exit 0
     end
 

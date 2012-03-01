@@ -1,16 +1,15 @@
 require 'pathname'
 require 'parallel'
-require 'awesome_print'
 require 'guignol/instance'
 require 'guignol/array/collect_key'
 
 module Guignol::Commands
   class Base
 
-    def initialize(patterns)
+    def initialize(*argv)
       @all_configs = load_config_files
       check_config_consistency
-      @configs = patterns.map { |pattern| 
+      @configs = argv.map { |pattern| 
         @all_configs.select { |config|
           config[:name] =~ /#{pattern}/
         }
@@ -18,7 +17,8 @@ module Guignol::Commands
     end
 
     def run
-      before_run or return
+      before_run or return if respond_to?(:before_run)
+
       Parallel.each(@configs) do |config|
         run_on_server(config)
       end
@@ -31,11 +31,6 @@ module Guignol::Commands
       $stdout.flush
       answer = $stdin.gets
       return answer.strip =~ /y/i
-    end
-
-    # Override in subclasses to do the heavy lifting
-    def before_run
-      return true
     end
 
   private

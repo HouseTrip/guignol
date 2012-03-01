@@ -12,6 +12,10 @@ module Guignol::Commands
     def run_on_server(config)
       Guignol::Instance.new(config).destroy
     end
+
+    def self.short_usage
+      ["<regexps>", "Destroy instances (if they exist)"]
+    end
   end
 end
 

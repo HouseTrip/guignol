@@ -6,6 +6,10 @@ module Guignol::Commands
     def run_on_server(config)
       Guignol::Instance.new(config).create
     end
+
+    def self.short_usage
+      ["<regexps>", "Create instances and volumes (unless they exist) then run start"]
+    end
   end
 end
 

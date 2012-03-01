@@ -13,4 +13,4 @@ Excon.defaults[:ssl_verify_peer] = false
 require 'guignol/shell'
 
 command = ARGV.shift
-Guignol::Shell.instance.execute(command, ARGV)
+Guignol::Shell.instance.execute(command, *ARGV)
