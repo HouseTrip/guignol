@@ -42,5 +42,12 @@ module Guignol
       puts "#{message} [y/n]"
       $stdin.gets =~ /^y$/i
     end
+
+    def require_options(*required_options)
+      required_options.each do |required_option|
+        next if @options.include?(required_option)
+        raise "option '#{required_option}' is mandatory for each #{subject_name}"
+      end
+    end
   end
 end

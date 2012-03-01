@@ -4,6 +4,7 @@ require 'guignol/commands/start'
 require 'guignol/commands/stop'
 require 'guignol/commands/help'
 require 'guignol/commands/list'
+require 'guignol/commands/uuid'
 
 module Guignol::Commands
   Map = {
@@ -13,5 +14,6 @@ module Guignol::Commands
     'stop'       => Guignol::Commands::Stop,
     'help'       => Guignol::Commands::Help,
     'list'       => Guignol::Commands::List,
+    'uuid'       => Guignol::Commands::UUID,
   }
 end

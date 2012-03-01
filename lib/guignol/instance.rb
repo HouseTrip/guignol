@@ -12,10 +12,13 @@ module Guignol
 
     def initialize(options)
       @options = options.dup
+      require_options :name, :uuid
+
       @options[:volumes] ||= []
       connection_options = DefaultConnectionOptions.dup.merge @options.slice(:region)
 
       @connection = Fog::Compute.new(connection_options)
+
       @subject = @connection.servers.
         select { |s| s.state != 'terminated' }.
         find { |s| s.tags['UUID'] == uuid }
@@ -163,6 +166,7 @@ module Guignol
 
 
     def update_dns
+      return unless @options[:domain]
       log "updating dns zone"
       
       unless dns_zone
@@ -187,6 +191,7 @@ module Guignol
 
 
     def remove_dns
+      return unless @options[:domain]
       log "removing dns record"
 
       unless dns_zone

@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "parallel", "~> 0.5.14"
   s.add_dependency "active_support"
   s.add_dependency "term-ansicolor"
+  s.add_dependency "uuidtools"
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- spec/*`.split("\n")
