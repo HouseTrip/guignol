@@ -46,6 +46,9 @@ module Guignol
       name and domain and "#{name}.#{domain}"
     end
 
+    def state
+      exist? and @subject.state or 'nonexistent'
+    end
 
     def create
       log "server already exists" and return self if exist?
