@@ -11,7 +11,7 @@ Install `guignol`:
     $ gem install guignol
 
 Guignol relies on the excellent [Fog gem](http://fog.io/) to connect to Amazon's APIs.
-Start by setting up you `~/.fog`:
+Start by setting up your `~/.fog`:
 
     ---- ~/.fog ----
     :default:
@@ -25,7 +25,7 @@ Start by setting up you `~/.fog`:
 Guignol doesn't care about the list of instances that live on your EC2 account,
 only what it's configured to deal with.
 
-This should prevent destroying other's instances when using (for instance)
+This should prevent destroying other's instances when using (for instance) a
 shared AWS/IAM account !
 
 Teach Guignol about your instances by adding them to its config file.
@@ -39,7 +39,7 @@ instance):
 
 Guignol will read it's configuration from `./config/guignol.yml`, `./guignol.yml`, or `~/.guignol.yml`.
 
-`guignol uuid` while output a new UUID if you need one.
+`guignol uuid` will output a new UUID if you need one.
 You can also use `uuidgen` if your distro come with it.
 
 And that's it for configuration!
@@ -93,7 +93,7 @@ If targeting multiple machines, guignol will run **in parallel**.
   The keypair to deploy to this instance. Default to not deploying any for security reasons (meaning you probably won't be able to log in if unset, depending on the AMI you're using).
   
 - `:security_group_ids`
-  A list of security gourps you want your instance to be a member of.
+  A list of security groups you want your instance to be a member of.
 
 - `:user_data`
   A script to run when an instance is created.
@@ -181,4 +181,4 @@ This one just contains 2 machines, `fubar.housetripdev.com.` and `gargantua.hosu
         }
         mount_data || { mkfs.ext4 /dev/xvdg && mount_data ; }
         date >> /tmp/stamp
-    
+
