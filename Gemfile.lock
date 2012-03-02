@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    guignol (0.1)
+    guignol (0.1.1)
       active_support
       fog (~> 1.1.2)
       parallel (~> 0.5.14)

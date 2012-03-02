@@ -14,7 +14,7 @@ Install `guignol`:
 Guignol relies on the excellent [Fog gem](http://fog.io/) to connect to Amazon's APIs.
 Start by setting up your `~/.fog`:
 
-    ---- ~/.fog ----
+    # ~/.fog
     :default:
       :aws_access_key_id:      ABCDEF....
       :aws_secret_access_key:  123456....
@@ -33,7 +33,7 @@ Teach Guignol about your instances by adding them to its config file.
 Each instance needs at least a name an a UUID (both will become tags on your
 instance):
 
-    ---- ~/.guignol.yml ----
+    # ~/.guignol.yml
     --- 
     - :name: hello-world
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
@@ -143,7 +143,7 @@ Now you can `guignol stop` your instances from the command line when not using t
 
 This one just contains 2 machines, `fubar.housetripdev.com.` and `gargantua.hosuetirpdev.com.`
 
-    ---- ~/.guignol.yml ----
+    # ~/.guignol.yml
     --- 
     - :name: hello-world
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
