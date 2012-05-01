@@ -25,26 +25,18 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'guignol/commands/create'
-require 'guignol/commands/kill'
-require 'guignol/commands/start'
-require 'guignol/commands/stop'
-require 'guignol/commands/help'
-require 'guignol/commands/list'
-require 'guignol/commands/uuid'
-require 'guignol/commands/new'
-require 'guignol/commands/fix_dns'
+require 'guignol/commands/base'
+require 'guignol/instance'
 
 module Guignol::Commands
-  Map = {
-    'create'     => Guignol::Commands::Create,
-    'kill'       => Guignol::Commands::Kill,
-    'start'      => Guignol::Commands::Start,
-    'stop'       => Guignol::Commands::Stop,
-    'help'       => Guignol::Commands::Help,
-    'list'       => Guignol::Commands::List,
-    'uuid'       => Guignol::Commands::UUID,
-    'new'        => Guignol::Commands::New,
-    'fixdns'     => Guignol::Commands::FixDNS,
-  }
+  class FixDNS < Base
+    def run_on_server(config)
+      Guignol::Instance.new(config).update_dns
+    end
+
+    def self.short_usage
+      ["<regexps>", "Make sure the DNS mappings are correct."]
+    end
+  end
 end
+
