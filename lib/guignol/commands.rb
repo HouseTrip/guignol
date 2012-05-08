@@ -32,7 +32,6 @@ require 'guignol/commands/stop'
 require 'guignol/commands/help'
 require 'guignol/commands/list'
 require 'guignol/commands/uuid'
-require 'guignol/commands/new'
 require 'guignol/commands/fix_dns'
 
 module Guignol::Commands
@@ -44,7 +43,6 @@ module Guignol::Commands
     'help'       => Guignol::Commands::Help,
     'list'       => Guignol::Commands::List,
     'uuid'       => Guignol::Commands::UUID,
-    'new'        => Guignol::Commands::New,
     'fixdns'     => Guignol::Commands::FixDNS,
   }
 end
