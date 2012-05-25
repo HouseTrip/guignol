@@ -125,8 +125,8 @@ module Guignol
       tags = { 'Name' => name, 'UUID' => uuid }
       response = @connection.create_tags(@subject.id, tags)
       unless response.status == 200
-        log "failed"
-        destroy and return
+        log "updating tags failed"
+        destroy and raise Error.new('updating tags failed')
       end
     end
 

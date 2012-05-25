@@ -36,6 +36,7 @@ require 'guignol/volume'
 module Guignol
   class Instance
     include Shared
+    class Error < Exception; end
 
     def initialize(options)
       @options = options.dup
@@ -103,7 +104,7 @@ module Guignol
     rescue Exception => e
       log "error while creating (#{e.class.name})"
       destroy
-      raise
+      raise Error.new('while creating server')
     end
 
 
@@ -119,17 +120,6 @@ module Guignol
         setup
         log "server started"
       end
-      return self
-    end
-
-    # shared between create and start
-    def setup
-      update_tags
-      log "waiting for public dns to be set up..."
-      wait_for { @subject.dns_name }
-      update_dns
-      update_volumes
-      wait_for_state 'running'
       return self
     end
 
@@ -164,34 +154,6 @@ module Guignol
     end
 
 
-    def update_tags
-      log "updating server tags"
-      tags = { 'Name' => name, 'Domain' => domain, 'UUID' => uuid }
-      response = @connection.create_tags(@subject.id, tags)
-      raise "failed" unless response.status == 200
-      return self
-    end
-
-
-    def update_root_volume_tags
-      log "updating root volume tags"
-      tags = { 'Name' => "#{name}-root", 'UUID' => uuid }
-      response = @connection.create_tags(@subject.volumes.first.id, tags)
-      raise "failed" unless response.status == 200
-      return self
-    end
-
-
-    def update_volumes
-      update_root_volume_tags
-
-      @options[:volumes].each do |options|
-        options[:availability_zone] = @subject.availability_zone
-        Volume.new(options).attach(@subject.id)
-      end
-    end
-
-
     def update_dns
       return unless @options[:domain]
       log "updating dns zone"
@@ -217,6 +179,51 @@ module Guignol
     end
 
 
+  private
+
+
+    def update_tags
+      log "updating server tags"
+      tags = { 'Name' => name, 'Domain' => domain, 'UUID' => uuid }
+      response = @connection.create_tags(@subject.id, tags)
+      raise Error.new("updating server tags") unless response.status == 200
+      return self
+    end
+
+
+    def update_root_volume_tags
+      log "updating root volume tags"
+      tags = { 'Name' => "#{name}-root", 'UUID' => uuid }
+
+      # we assume the root volume is the first in the block device map
+      root_volume_id = @subject.block_device_mapping.first['volumeId']
+      response = @connection.create_tags(root_volume_id, tags)
+      raise Error.new("updating root volume tags") unless response.status == 200
+      return self
+    end
+
+
+    def update_volumes
+      @options[:volumes].each do |options|
+        options[:availability_zone] = @subject.availability_zone
+        Volume.new(options).attach(@subject.id)
+      end
+    end
+
+
+    # shared between create and start
+    def setup
+      update_tags
+      log "waiting for public dns to be set up..."
+      wait_for { @subject.dns_name }
+      update_dns
+      update_volumes
+      update_root_volume_tags
+      wait_for_state 'running'
+      return self
+    end
+
+
     def remove_dns
       return unless @options[:domain]
       log "removing dns record"
@@ -235,9 +242,6 @@ module Guignol
 
       return self
     end
-
-
-  private
 
 
     def wait_for_state_transitions

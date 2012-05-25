@@ -30,11 +30,11 @@ require 'guignol/tty_spinner'
 module Guignol
   module Shared
 
+    private
 
-    def log message
-      stamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-      $stderr.write("[#{stamp}] #{name}: #{message}\n")
-      $stderr.flush
+    def log(message)
+      Guignol.logger.info("#{name}: #{message}")
+      Thread.pass
       true
     end
 
