@@ -38,7 +38,8 @@ module Guignol::Commands
 
     def run_on_server(config)
       instance = Guignol::Instance.new(config)
-      puts "%s:\t%s" % [instance.name, colorize(instance.state)]
+
+      puts "%-#{max_witdth}s %s" % [instance.name, colorize(instance.state)]
     end
 
     def self.short_usage
@@ -47,11 +48,15 @@ module Guignol::Commands
 
   private
 
+    def max_witdth
+      @max_width ||= configs.map { |c| c[:name].size }.max
+    end
+
     def colorize(state)
       case state
-        when 'running'     then Term::ANSIColor.green(state)
-        when 'stopped'     then Term::ANSIColor.yellow(state)
-        when 'nonexistent' then Term::ANSIColor.red(state)
+        when 'running'            then Term::ANSIColor.green(state)
+        when /starting|stopping/  then Term::ANSIColor.yellow(state)
+        when 'nonexistent'        then Term::ANSIColor.red(state)
         else state
       end
     end

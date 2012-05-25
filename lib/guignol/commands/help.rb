@@ -51,7 +51,7 @@ module Guignol::Commands
       puts
       puts "The commands are:"
       command_table =
-        Guignol::Commands::Map.map { |command_name, command_class|
+        Guignol::Commands::CommandList.map { |command_name, command_class|
           usage = command_class.short_usage
            [command_name] + usage
         }

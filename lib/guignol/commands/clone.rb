@@ -25,27 +25,67 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'guignol/commands/create'
-require 'guignol/commands/kill'
-require 'guignol/commands/start'
-require 'guignol/commands/stop'
-require 'guignol/commands/help'
-require 'guignol/commands/list'
-require 'guignol/commands/uuid'
-require 'guignol/commands/fix_dns'
-require 'guignol/commands/clone'
+require 'guignol/commands/base'
+require 'uuidtools'
+require 'yaml'
+
+
+# extend a Hash with this
+module HashMap
+  def hashmap(options = {}, &block)
+    self.dup.update(self) do |key,value|
+      value = _deep_convert(value, block) if options[:deep]
+      block.call(key, value)
+    end
+  end
+
+  private
+
+  def _deep_convert(value, block)
+    case value
+    when Hash
+      value.extend(HashMap).hashmap(&block)
+    when Array
+      value.map { |item| _deep_convert(item, block) }
+    else
+      value
+    end
+  end
+end
+
 
 module Guignol::Commands
-  CommandList = [
-    ['create',    Guignol::Commands::Create ],
-    ['kill',      Guignol::Commands::Kill   ],  
-    ['start',     Guignol::Commands::Start  ],  
-    ['stop',      Guignol::Commands::Stop   ],  
-    ['help',      Guignol::Commands::Help   ],  
-    ['list',      Guignol::Commands::List   ],  
-    ['uuid',      Guignol::Commands::UUID   ],  
-    ['fixdns',    Guignol::Commands::FixDNS ],      
-    ['clone',     Guignol::Commands::Clone  ],    
-  ]
-  Map = Hash[CommandList]
+  class Clone < Base
+    def initialize(source_name, target_name)
+      super()
+      @source_name = source_name
+      @target_name = target_name
+
+      @source_config = configs.find { |config| config[:name] == source_name }
+      unless @source_config
+        raise "machine '#{source_name}' is unknown"
+      end
+    end
+
+
+    def run
+      new_config = @source_config.extend(HashMap).hashmap(:deep => true) do |key,value|
+        case key
+        when :uuid
+          UUIDTools::UUID.random_create.to_s.upcase
+        when :name
+          value.sub(/#{@source_name}/, @target_name)
+        else
+          value
+        end
+      end
+      # binding.pry
+      $stdout.puts [new_config].to_yaml
+    end
+
+
+    def self.short_usage
+      ["<name> <new-name>", "Print YAML for a new machine that mimics another."]
+    end
+  end
 end

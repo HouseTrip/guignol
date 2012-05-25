@@ -47,14 +47,19 @@ module Guignol::Commands
     def run
       before_run or return if respond_to?(:before_run)
 
-      Parallel.each(@configs) do |config|
+      Parallel.each(@configs, :in_threads => @configs.size) do |config|
         run_on_server(config)
       end
     end
 
   protected
 
+    def configs
+      @all_configs
+    end
+
     def confirm(message)
+      return true unless $stdin.tty?
       $stdout.print "#{message}? [y/N] "
       $stdout.flush
       answer = $stdin.gets
