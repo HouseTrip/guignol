@@ -141,21 +141,19 @@ Now you can `guignol stop` your instances from the command line when not using t
 
 ## Complete config example
 
-This one just contains 2 machines, `fubar.housetripdev.com.` and `gargantua.hosuetirpdev.com.`
+This one just contains 1 machine, `fubar.example.com.`
 
     # ~/.guignol.yml
     --- 
-    - :name: hello-world
-      :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
     - :name:                fubar
-      :domain:              housetripdev.com.
+      :domain:              example.com.
       :uuid:                68C3C0C2-1BA3-465F-8626-E065E4EF9048
       :region:              eu-west-1
       :image_id:            ami-15f7c961                            # 32 bits
       :flavor_id:           m1.small
-      :key_name:            jtl-laptop
+      :key_name:            john-doe
       :security_group_ids:  
-        - sg-7e638109                                               # housetrip-basic
+        - sg-7e638abc
       :volumes:
         - :name: fubar-swap
           :uuid: 9D5A278E-432C-41DB-9FB5-8AF5C1BD021F
