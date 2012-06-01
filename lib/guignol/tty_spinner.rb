@@ -38,7 +38,7 @@ module Guignol
     end
 
     def spin!
-      if $stdout.tty? || $stdin.tty?
+      if $stderr.tty?
         $stderr.write(Chars[@state % Chars.size] + "\r")
         $stderr.flush
         @state += 1

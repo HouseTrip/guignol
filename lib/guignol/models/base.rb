@@ -25,15 +25,80 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
+require 'guignol/connection'
 require 'guignol/tty_spinner'
 
-module Guignol
-  module Shared
+module Guignol::Models
+  class Base
+    # The wrapped instance, volume, etc we're manipulating
+    attr :subject
+    attr :options
+    attr :connection
 
-    private
+    def initialize(options)
+      @options = default_options.merge(options)
+      require_options :name, :uuid
+      connection_options = Guignol::DefaultConnectionOptions.merge @options.slice(:region)
 
-    def log(message)
+      @connection = Guignol::Connection.get(connection_options)
+      @subject = find_subject
+    end
+
+
+    def exist?
+      !!@subject
+    end
+    alias_method :exists?, :exist?
+
+
+    def name
+      @options[:name]
+    end
+
+
+    def uuid
+      @options[:uuid]
+    end
+
+
+    def state
+      @subject and @subject.state or 'nonexistent'
+    end
+
+
+    protected
+
+
+    def set_subject(subject)
+      @subject = subject
+    end
+
+
+    def reload
+      @subject = find_subject
+    end
+
+
+    def find_subject
+      raise 'Define me in a subclass'
+    end
+
+
+    Interval = 200e-3
+    Timeout  = 300
+
+
+    def default_options
+      {}
+    end
+
+    def log(message, options={})
       Guignol.logger.info("#{name}: #{message}")
+      if e = options[:error]
+        Guignol.logger.info e.class.name
+        Guignol.logger.info e.message
+        e.backtrace.each { |line| Guignol.logger.debug line }
+      end
       Thread.pass
       true
     end
@@ -44,26 +109,29 @@ module Guignol
     end
 
 
+    # wait until the subject is in one of +states+
     def wait_for_state(*states)
-      @subject or raise "#{subject_name} doesn't exist"
-      original_state = @subject.state
-      unless states.include?(original_state)
-        log "waiting for #{subject_name} to become #{states.join(' or ')}..."
-        wait_for do
-          if @subject.state != original_state
-            log "#{subject_name} now #{@subject.state}"
-            original_state = @subject.state
-          end
-          states.include?(@subject.state)
+      exist? or raise "#{subject_name} doesn't exist"
+      original_state = state
+      return if states.include?(original_state)
+      log "waiting for #{subject_name} to become #{states.join(' or ')}..."
+      Fog.wait_for(Timeout,Interval) do
+        Guignol::TtySpinner.spin!
+        reload
+        if state != original_state
+          log "#{subject_name} now #{state}"
+          original_state = state
         end
+        states.include?(state)
       end
     end
 
 
     def wait_for(&block)
       return unless @subject
-      @subject.wait_for { TtySpinner.spin! ; block.call }
+      @subject.wait_for(Timeout,Interval) { Guignol::TtySpinner.spin! ; block.call }
     end
+
 
     def confirm(message)
       puts "#{message} [y/n]"

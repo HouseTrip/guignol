@@ -27,20 +27,30 @@
 require 'logger'
 
 module Guignol
-    DefaultConnectionOptions = {
-      :provider  => :aws,
-      :region    => 'eu-west-1'
-    }
-    DefaultServerOptions = {
-      :flavor_id => 't1.micro',
-      :volumes   => []
-    }
-    DefaultVolumeOptions = {}
+  DefaultConnectionOptions = {
+    :provider  => :aws,
+    :region    => 'eu-west-1'
+  }
+  DefaultServerOptions = {
+    :flavor_id => 't1.micro',
+    :volumes   => []
+  }
+  DefaultVolumeOptions = {}
 
 
-    def self.logger
-      @logger ||= ::Logger.new($stdout).tap do |logger|
+  class << self
+    def logger
+      @logger ||= ::Logger.new(logger_file).tap do |logger|
         logger.progname = 'guignol'
       end
     end
+
+
+    private
+
+
+    def logger_file
+      $stdout.tty? ? $stdout : File.open('/dev/null','w')  
+    end
+  end
 end

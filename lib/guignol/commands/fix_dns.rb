@@ -26,12 +26,12 @@
 # either expressed or implied, of the authors.
 
 require 'guignol/commands/base'
-require 'guignol/instance'
+require 'guignol/models/instance'
 
 module Guignol::Commands
   class FixDNS < Base
     def run_on_server(config)
-      Guignol::Instance.new(config).update_dns
+      Guignol::Models::Instance.new(config).update_dns
     end
 
     def self.short_usage

@@ -26,7 +26,7 @@
 # either expressed or implied, of the authors.
 
 require 'guignol/commands/base'
-require 'guignol/instance'
+require 'guignol/models/instance'
 
 module Guignol::Commands
   class Kill < Base
@@ -37,7 +37,7 @@ module Guignol::Commands
     end
 
     def run_on_server(config)
-      Guignol::Instance.new(config).destroy
+      Guignol::Models::Instance.new(config).destroy
     end
 
     def self.short_usage

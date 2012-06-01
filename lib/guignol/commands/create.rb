@@ -26,12 +26,12 @@
 # either expressed or implied, of the authors.
 
 require 'guignol/commands/base'
-require 'guignol/instance'
+require 'guignol/models/instance'
 
 module Guignol::Commands
   class Create < Base
     def run_on_server(config)
-      Guignol::Instance.new(config).create
+      Guignol::Models::Instance.new(config).create
     end
 
     def self.short_usage

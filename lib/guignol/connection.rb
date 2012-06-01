@@ -25,41 +25,14 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'guignol/commands/base'
-require 'guignol/models/instance'
-require 'term/ansicolor'
+require 'fog'
 
-module Guignol::Commands
-  class List < Base
-    def initialize(*argv)
-      argv = ['.*'] if argv.empty?
-      super(*argv)
-    end
-
-    def run_on_server(config)
-      instance = Guignol::Models::Instance.new(config)
-
-      puts "%-#{max_witdth}s %s" % [instance.name, colorize(instance.state)]
-    end
-
-    def self.short_usage
-      ["[regexp]", "List known instances (matching the regexp) and their status."]
-    end
-
-  private
-
-    def max_witdth
-      @max_width ||= configs.map { |c| c[:name].size }.max
-    end
-
-    def colorize(state)
-      case state
-        when 'running'            then Term::ANSIColor.green(state)
-        when /starting|stopping/  then Term::ANSIColor.yellow(state)
-        when 'nonexistent'        then Term::ANSIColor.red(state)
-        else state
-      end
+module Guignol
+  # Pool Fog connections to minimize latency
+  module Connection
+    def self.get(options)
+      @connections ||= {}
+      @connections[options.dup] ||= Fog::Compute.new(options)
     end
   end
 end
-

@@ -28,7 +28,6 @@
 
 require 'pathname'
 require 'parallel'
-require 'guignol/instance'
 require 'guignol/array/collect_key'
 
 module Guignol::Commands

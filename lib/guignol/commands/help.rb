@@ -26,7 +26,7 @@
 # either expressed or implied, of the authors.
 
 require 'guignol/commands/base'
-require 'guignol/instance'
+require 'guignol/models/instance'
 
 module Guignol::Commands
   class Help

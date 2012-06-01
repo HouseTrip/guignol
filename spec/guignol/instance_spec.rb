@@ -1,7 +1,8 @@
-require 'guignol/instance'
+require 'spec_helper'
+require 'guignol/models/instance'
 
-describe Guignol::Instance do
-  subject { Guignol::Instance.new(options) }
+describe Guignol::Models::Instance do
+  subject { described_class.new(options) }
 
   let(:options) {{
     :name => 'foobar',
@@ -9,8 +10,8 @@ describe Guignol::Instance do
   }}
 
   before(:each) do
-    connection = stub(:servers => [])
-    Fog::Compute.stub(:new).and_return(connection)
+    # connection = stub(:servers => [])
+    # Fog::Compute.stub(:new).and_return(connection)
   end
 
   describe '#initialize' do
@@ -26,6 +27,45 @@ describe Guignol::Instance do
 
     it 'should pass with minimal options' do
       subject
+    end
+  end
+
+
+  shared_examples_for 'server setup' do
+    it 'set server tags'
+    it 'configures DNS properly'
+  end
+
+
+  describe '#create' do
+    it 'should pass with minimal options' do
+      subject.create
+    end
+
+    it 'reuses existing volumes'
+    it 'fails when existing volumes are in different zones'
+
+    it 'starts up the server'
+
+    it_should_behave_like 'server setup'
+  end
+
+
+  describe '#start' do
+    it_should_behave_like 'server setup'
+
+    it 'returns when the server does not exist' do
+      subject.start
+    end
+
+    it 'returns with a server marked as "running"'
+
+  end
+
+
+  describe '#destroy' do
+    it 'should pass with minimal options' do
+      subject.destroy
     end
   end
 end
