@@ -25,29 +25,21 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'guignol/commands/create'
-require 'guignol/commands/kill'
-require 'guignol/commands/start'
-require 'guignol/commands/stop'
-require 'guignol/commands/help'
-require 'guignol/commands/list'
-require 'guignol/commands/uuid'
-require 'guignol/commands/fix_dns'
-require 'guignol/commands/clone'
-require 'guignol/commands/execute'
+require 'guignol/commands/base'
+require 'guignol/models/instance'
 
 module Guignol::Commands
-  CommandList = [
-    ['create',    Guignol::Commands::Create ],
-    ['kill',      Guignol::Commands::Kill   ],  
-    ['start',     Guignol::Commands::Start  ],  
-    ['stop',      Guignol::Commands::Stop   ],  
-    ['help',      Guignol::Commands::Help   ],  
-    ['list',      Guignol::Commands::List   ],  
-    ['uuid',      Guignol::Commands::UUID   ],  
-    ['fixdns',    Guignol::Commands::FixDNS ],      
-    ['clone',     Guignol::Commands::Clone  ],
-    ['execute',   Guignol::Commands::Execute  ],    
-  ]
-  Map = Hash[CommandList]
+  class Execute < Base
+    
+    ensure_args "--execute", "--aws-key"
+    
+    def run_on_server(config)
+      instance.subject.ssh(arg_val("--execute"), :keys => arg_val("--aws-key"))
+    end
+
+    def self.short_usage
+      ["<regexps>", "Execute command on server"]
+    end
+  end
 end
+
