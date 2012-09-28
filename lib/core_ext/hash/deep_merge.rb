@@ -25,19 +25,32 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'core_ext/array/collect_key'
-require 'core_ext/hash/map_to_hash'
-require 'core_ext/hash/deep_merge'
-require 'guignol/logger'
+module Hash::DeepMerge
 
-module Guignol
-  DefaultConnectionOptions = {
-    :provider  => :aws,
-    :region    => 'eu-west-1'
-  }
-  DefaultServerOptions = {
-    :flavor_id => 't1.micro',
-    :volumes   => []
-  }
-  DefaultVolumeOptions = {}
+  # Like +Hash#merge+, except when the values on *both*
+  # sides also are hashes, they get merged (recursively).
+  def deep_merge(other_hash)
+    self.merge(other_hash, method(:_deep_merge_helper))
+  end
+
+
+  def deep_merge!(other_hash)
+    self.replace self.deep_merge(other_hash)
+  end
+
+
+  private
+
+
+  def _deep_merge_helper(key, left_value, right_value)
+    if left_value.kind_of?(Hash) && right_value.kind_of?(Hash)
+      left_value.deep_merge(right_value)
+    else
+      right_value
+    end
+  end
+
+
+  Hash.send(:include, self)
 end
+

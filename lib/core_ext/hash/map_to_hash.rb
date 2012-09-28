@@ -25,19 +25,30 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-require 'core_ext/array/collect_key'
-require 'core_ext/hash/map_to_hash'
-require 'core_ext/hash/deep_merge'
-require 'guignol/logger'
+module Hash::MapToHash
+  # Update all values in a hash.
+  # Passes +key,value+ pairs to its block, replaces the old value 
+  # with the block's return value.
+  def map_to_hash(options = {}, &block)
+    self.dup.update(self) do |key,value|
+      value = _deep_convert(value, block) if options[:deep]
+      block.call(key, value)
+    end
+  end
 
-module Guignol
-  DefaultConnectionOptions = {
-    :provider  => :aws,
-    :region    => 'eu-west-1'
-  }
-  DefaultServerOptions = {
-    :flavor_id => 't1.micro',
-    :volumes   => []
-  }
-  DefaultVolumeOptions = {}
+  private
+
+  def _deep_convert(value, block)
+    case value
+    when Hash
+      value.map_to_hash({ :deep => true }, block)
+    when Array
+      value.map { |item| _deep_convert(item, block) }
+    else
+      value
+    end
+  end
+
+  Hash.send(:include, self)
 end
+

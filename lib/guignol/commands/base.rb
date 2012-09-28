@@ -28,7 +28,7 @@
 
 require 'pathname'
 require 'parallel'
-require 'guignol/array/collect_key'
+require 'core_ext/array/collect_key'
 
 module Guignol::Commands
   class Base

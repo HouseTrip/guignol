@@ -30,30 +30,6 @@ require 'uuidtools'
 require 'yaml'
 
 
-# extend a Hash with this
-module HashMap
-  def hashmap(options = {}, &block)
-    self.dup.update(self) do |key,value|
-      value = _deep_convert(value, block) if options[:deep]
-      block.call(key, value)
-    end
-  end
-
-  private
-
-  def _deep_convert(value, block)
-    case value
-    when Hash
-      value.extend(HashMap).hashmap(&block)
-    when Array
-      value.map { |item| _deep_convert(item, block) }
-    else
-      value
-    end
-  end
-end
-
-
 module Guignol::Commands
   class Clone < Base
     def initialize(source_name, target_name)
@@ -69,7 +45,7 @@ module Guignol::Commands
 
 
     def run
-      new_config = @source_config.extend(HashMap).hashmap(:deep => true) do |key,value|
+      new_config = @source_config.map_to_hash(:deep => true) do |key,value|
         case key
         when :uuid
           UUIDTools::UUID.random_create.to_s.upcase
