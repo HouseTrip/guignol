@@ -33,7 +33,7 @@ require 'core_ext/array/collect_key'
 module Guignol::Commands
   class Base
     class Error < Exception; end
-    
+
     def self.ensure_args(*args)
       self.class_variable_set(:@@ensure_args, args.flatten)
     end
@@ -42,11 +42,9 @@ module Guignol::Commands
 
     def initialize(*argv)
       @argv = argv.flatten
-      @all_configs = load_config_files
-      check_config_consistency
       @configs = servers.map { |pattern| 
-        @all_configs.select { |config|
-          config[:name] =~ /#{pattern}/
+        Guignol.configuration.select { |name,config|
+          name.to_s =~ /#{pattern}/
         }
       }.flatten.uniq
       ensure_args
@@ -78,11 +76,9 @@ module Guignol::Commands
     end
     
 
-  protected
-  
-    def configs
-      @all_configs
-    end
+    protected
+    
+    attr :configs
 
     def confirm(message)
       return true unless $stdin.tty?
@@ -129,16 +125,5 @@ module Guignol::Commands
       ].each do |pathname|
         next unless pathname.exist?
          return YAML.load(pathname.read)
-      end
-      return {}
-    end
-
-    def check_config_consistency
-      errors = []
-      errors << "Instance config lacks :name" unless @all_configs.collect_key(:name).all?
-      errors << "Instance config lacks :uuid" unless @all_configs.collect_key(:uuid).all?
-      errors << "Volume config lacks :uuid"   unless @all_configs.collect_key(:volumes).collect_key(:uuid)
-      raise errors.join(', ') if errors.any?
-    end
   end
 end

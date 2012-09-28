@@ -26,6 +26,7 @@
 # either expressed or implied, of the authors.
 
 require 'singleton'
+require 'guignol'
 
 module Guignol
   class TtySpinner
@@ -38,7 +39,7 @@ module Guignol
     end
 
     def spin!
-      if $stderr.tty?
+      if $stderr.tty? && !Guignol.env.test?
         $stderr.write(Chars[@state % Chars.size] + "\r")
         $stderr.flush
         @state += 1
