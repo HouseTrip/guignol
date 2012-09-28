@@ -24,7 +24,7 @@
 # The views and conclusions contained in the software and documentation are those
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
-require 'logger'
+
 
 module Guignol
   DefaultConnectionOptions = {
@@ -36,21 +36,4 @@ module Guignol
     :volumes   => []
   }
   DefaultVolumeOptions = {}
-
-
-  class << self
-    def logger
-      @logger ||= ::Logger.new(logger_file).tap do |logger|
-        logger.progname = 'guignol'
-      end
-    end
-
-
-    private
-
-
-    def logger_file
-      $stdout.tty? ? $stdout : File.open('/dev/null','w')  
-    end
-  end
 end
