@@ -123,10 +123,14 @@ module Guignol::Models
 
     def update_dns
       return unless options[:domain]
-      log "updating dns zone"
+      if subject.nil? || subject.state != 'running'
+        log "server not running, not updating DNS"
+        return
+      end
+      log "updating DNS"
       
       unless dns_zone
-        log "dns zone does not exist"
+        log "DNS zone does not exist"
         return self
       end
 
