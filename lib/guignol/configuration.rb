@@ -25,32 +25,45 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
-module Hash::DeepMerge
+require 'active_support'
+require 'active_support/core_ext/enumerable'
+require 'guignol'
 
-  # Like +Hash#merge+, except when the values on *both*
-  # sides also are hashes, they get merged (recursively).
-  def deep_merge(other_hash)
-    self.merge(other_hash, method(:_deep_merge_helper))
+module Guignol::Configuration
+
+  def configuration
+    @configuration ||= load_config_file
   end
-
-
-  def deep_merge!(other_hash)
-    self.replace self.deep_merge(other_hash)
-  end
-
 
   private
 
-
-  def _deep_merge_helper(key, left_value, right_value)
-    if left_value.kind_of?(Hash) && right_value.kind_of?(Hash)
-      left_value.deep_merge(right_value)
-    else
-      right_value
-    end
+  def config_file_path
+    @config_file_path ||= [
+      Pathname.new(ENV['GUIGNOL_YML'] || '/var/nonexistent'),
+      Pathname.new('guignol.yml'),
+      Pathname.new('config/guignol.yml'),
+      Pathname.new(ENV['HOME']).join('.guignol.yml')
+    ].find(&:exist?)
   end
 
+  # Load the config hash for the file, converting old (v0.2.0) Yaml config files.
+  def load_config_file
+    return {} if config_file_path.nil?
+    data = YAML.load(config_file_path.read)
+    return data unless data.kind_of?(Array)
 
-  Hash.send(:include, self)
+    # Convert the toplevel array to a hash. Same for arrays of volumes.
+    Guignol.logger.warn "Configuration file '#{config_file_path}' uses the old array format. Trying to load it."
+    raise "Instance config lacks :name" unless data.collect_key(:name).all?
+    result = data.index_by { |item| item.delete(:name) }
+    result.each_pair do |name, config|
+      raise "Volume config lacks :name" unless config[:volumes].collect_key(:name).all?
+      next unless config[:volumes]
+      config[:volumes] = config[:volumes].index_by { |item| item.delete(:name) }
+    end
+
+    return result
+  end
+
+  Guignol.extend(self)
 end
-

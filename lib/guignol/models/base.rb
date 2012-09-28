@@ -34,10 +34,13 @@ module Guignol::Models
     attr :subject
     attr :options
     attr :connection
+    attr :name
 
-    def initialize(options)
+    def initialize(name, options)
+      @name    = name
       @options = default_options.merge(options)
-      require_options :name, :uuid
+      require_name!
+      require_options! :uuid
       connection_options = Guignol::DefaultConnectionOptions.merge @options.slice(:region)
 
       @connection = Guignol::Connection.get(connection_options)
@@ -49,11 +52,6 @@ module Guignol::Models
       !!@subject
     end
     alias_method :exists?, :exist?
-
-
-    def name
-      @options[:name]
-    end
 
 
     def uuid
@@ -138,7 +136,12 @@ module Guignol::Models
       $stdin.gets =~ /^y$/i
     end
 
-    def require_options(*required_options)
+    def require_name!
+      return unless @name.nil? || @name =~ /^\s*$/
+      raise "Name cannot be empty or blank"
+    end
+
+    def require_options!(*required_options)
       required_options.each do |required_option|
         next if @options.include?(required_option)
         raise "option '#{required_option}' is mandatory for each #{subject_name}"

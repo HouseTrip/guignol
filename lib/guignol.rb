@@ -27,8 +27,9 @@
 
 require 'core_ext/array/collect_key'
 require 'core_ext/hash/map_to_hash'
-require 'core_ext/hash/deep_merge'
 require 'guignol/logger'
+require 'guignol/configuration'
+require 'guignol/env'
 
 module Guignol
   DefaultConnectionOptions = {

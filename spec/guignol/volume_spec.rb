@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'guignol/models/volume'
 
 describe Guignol::Models::Volume do
-  subject { described_class.new(options) }
+  subject { described_class.new(name, options) }
 
+  let(:name) { 'foo' }
   let(:options) {{
-    :name => 'foo',
     :uuid => 'bar'
   }}
 

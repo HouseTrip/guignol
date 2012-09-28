@@ -31,8 +31,8 @@ require 'guignol/models/instance'
 module Guignol::Commands
   class Kill < Base
     def before_run
-      return true if @configs.empty?
-      names = @configs.map { |config| config[:name] }.join(", ")
+      return true if configs.empty?
+      names = configs.map { |config| config[:name] }.join(", ")
       confirm "Are you sure you want to destroy servers #{names}"
     end
 

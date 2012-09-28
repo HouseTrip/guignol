@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'guignol/models/instance'
 
 describe Guignol::Models::Instance do
-  subject { described_class.new(options) }
+  subject { described_class.new(name, options) }
 
+  let(:name) { "foobar" }
   let(:options) {{
-    :name => 'foobar',
     :uuid => '948DB8E9-A356-4F66-8857-165FBDF5A71F'
   }}
 
@@ -20,8 +20,8 @@ describe Guignol::Models::Instance do
       expect { subject }.to raise_error
     end
 
-    it 'should require :name' do
-      options.delete :name
+    it 'should require a name' do
+      name.replace ""
       expect { subject }.to raise_error
     end
 
