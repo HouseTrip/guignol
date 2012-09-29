@@ -35,10 +35,13 @@ instance):
 
     # ~/.guignol.yml
     --- 
-    - :name: hello-world
+    hello-world:
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
 
-Guignol will read it's configuration from `./config/guignol.yml`, `./guignol.yml`, or `~/.guignol.yml`.
+Guignol will read it's configuration from the first file in the following list:
+
+- the value of the `GUIGNOL_YML` environment variable,
+- `./guignol.yml`, `./config/guignol.yml`, `~/.guignol.yml`
 
 `guignol uuid` will output a new UUID if you need one.
 You can also use `uuidgen` if your distro come with it.
@@ -96,6 +99,9 @@ If targeting multiple machines, guignol will run **in parallel**.
 - `:security_group_ids`
   A list of security groups you want your instance to be a member of.
 
+- `:volumes`
+  A list of EBS volumes to be created if necessary, and attached to the instance.
+
 - `:user_data`
   A script to run when an instance is created.
 
@@ -145,7 +151,7 @@ This one just contains 1 machine, `fubar.example.com.`
 
     # ~/.guignol.yml
     --- 
-    - :name:                fubar
+    fubar:
       :domain:              example.com.
       :uuid:                68C3C0C2-1BA3-465F-8626-E065E4EF9048
       :region:              eu-west-1
@@ -155,12 +161,12 @@ This one just contains 1 machine, `fubar.example.com.`
       :security_group_ids:  
         - sg-7e638abc
       :volumes:
-        - :name: fubar-swap
+        fubar-swap:
           :uuid: 9D5A278E-432C-41DB-9FB5-8AF5C1BD021F
           :dev:  /dev/sdf
           :size: 4
           :delete_on_termination: true
-        - :name: fubar-data
+        fubar-data:
           :uuid: E180203F-9DE1-4C6A-B09B-33B2FAC8F36E
           :dev:  /dev/sdg
           :size: 20
