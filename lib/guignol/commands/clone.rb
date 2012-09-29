@@ -25,6 +25,7 @@
 # of the authors and should not be interpreted as representing official policies, 
 # either expressed or implied, of the authors.
 
+require 'guignol/configuration'
 require 'guignol/commands/base'
 require 'uuidtools'
 require 'yaml'

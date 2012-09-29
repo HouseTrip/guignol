@@ -2,9 +2,9 @@ require 'spec_helper'
 require 'guignol'
 
 describe Guignol::Configuration do
+  subject { Object.new.extend(described_class) }
   let(:test_path) { Pathname.new 'tmp/test.yml' }
-
-  subject { Guignol.configuration }
+  let(:result) { subject.configuration }
 
   before do
     ENV['GUIGNOL_YML'] = test_path
@@ -19,11 +19,12 @@ describe Guignol::Configuration do
 
   shared_examples_for 'loaded config' do
     it 'should load' do
-      subject
+      result.should be_a_kind_of(Hash)
     end
 
     it 'loads volumes' do
-      subject['john-mcfoo'][:volumes].should_not be_empty
+      # require 'pry' ; require 'pry-nav' ; binding.pry
+      result['john-mcfoo'][:volumes].should_not be_empty
     end
   end
 

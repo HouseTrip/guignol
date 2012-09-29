@@ -26,21 +26,29 @@
 # either expressed or implied, of the authors.
 
 
+require 'guignol'
+require 'guignol/configuration'
 require 'pathname'
 require 'parallel'
 require 'core_ext/array/collect_key'
 
 module Guignol::Commands
   class Base
-    class Error < Exception; end
+    Error = Class.new(Exception)
+    NAMED_ARG_RE = /^--/
 
-    def self.ensure_args(*args)
-      self.class_variable_set(:@@ensure_args, args.flatten)
+    module ClassMethods
+      def ensure_args(*args)
+        @ensure_args ||= []
+        return @ensure_args if args.empty?
+        @ensure_args = args.flatten
+      end
     end
-    
-    NAMED_ARG = /^--/
+    extend ClassMethods
+
 
     def initialize(*argv)
+      @argv = argv.flatten
       @configs = Guignol.configuration.delete_if { |name,config|
         servers.none? { |pattern| name.to_s =~ /#{pattern}/ }
       }
@@ -86,12 +94,10 @@ module Guignol::Commands
     end
     
     def ensure_args
-      return unless self.class.class_variable_defined?(:@@ensure_args)
- 
-      self.class.class_variable_get(:@@ensure_args).each do |req_arg|
+      self.class.ensure_args.each do |req_arg|
         raise Error.new("required argument #{req_arg} not found") unless args.include?(req_arg)
-  end
-end
+      end
+    end
 
   private
   
@@ -101,26 +107,15 @@ end
     
     def _args
       @argv.dup.drop_while do |arg|
-        (arg =~ NAMED_ARG).nil?
+        (arg =~ NAMED_ARG_RE).nil?
       end
     end
     
     def next_arg(arg_name)
       index = args.index(arg_name)
       arg_at = args[index + 1]
-      return nil if arg_at =~ NAMED_ARG
+      return nil if arg_at =~ NAMED_ARG_RE
       arg_at
     end
-
-    # Read & return the first available config.
-    def load_config_files
-      [
-        Pathname.new(ENV['GUIGNOL_YML'] || '/var/nonexistent'),
-        Pathname.new('guignol.yml'),
-        Pathname.new('config/guignol.yml'),
-        Pathname.new(ENV['HOME']).join('.guignol.yml')
-      ].each do |pathname|
-        next unless pathname.exist?
-         return YAML.load(pathname.read)
   end
 end
