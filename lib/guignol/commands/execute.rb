@@ -33,7 +33,8 @@ module Guignol::Commands
     
     ensure_args "--execute", "--aws-key"
     
-    def run_on_server(config)
+    def run_on_server(name, config)
+      instance = Guignol::Models::Instance.new(name, config)
       instance.subject.ssh(arg_val("--execute"), :keys => arg_val("--aws-key"))
     end
 
