@@ -36,10 +36,10 @@ module Guignol::Commands
       super(*argv)
     end
 
-    def run_on_server(config)
-      instance = Guignol::Models::Instance.new(config)
+    def run_on_server(name, config)
+      instance = Guignol::Models::Instance.new(name, config)
 
-      puts "%-#{max_witdth}s %s" % [instance.name, colorize(instance.state)]
+      puts "%-#{max_width}s %s" % [instance.name, colorize(instance.state)]
     end
 
     def self.short_usage
@@ -48,8 +48,8 @@ module Guignol::Commands
 
   private
 
-    def max_witdth
-      @max_width ||= configs.map { |c| c[:name].size }.max
+    def max_width
+      @max_width ||= configs.keys.map(&:size).max
     end
 
     def colorize(state)

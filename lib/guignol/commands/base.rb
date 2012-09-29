@@ -41,20 +41,17 @@ module Guignol::Commands
     NAMED_ARG = /^--/
 
     def initialize(*argv)
-      @argv = argv.flatten
-      @configs = servers.map { |pattern| 
-        Guignol.configuration.select { |name,config|
-          name.to_s =~ /#{pattern}/
-        }
-      }.flatten.uniq
+      @configs = Guignol.configuration.delete_if { |name,config|
+        servers.none? { |pattern| name.to_s =~ /#{pattern}/ }
+      }
       ensure_args
     end
 
     def run
       before_run or return if respond_to?(:before_run)
 
-      Parallel.each(@configs, :in_threads => @configs.size) do |config|
-        run_on_server(config)
+      Parallel.each(@configs, :in_threads => @configs.size) do |name,config|
+        run_on_server(name, config)
       end
     end
 
@@ -77,7 +74,7 @@ module Guignol::Commands
     
 
     protected
-    
+
     attr :configs
 
     def confirm(message)
@@ -93,8 +90,8 @@ module Guignol::Commands
  
       self.class.class_variable_get(:@@ensure_args).each do |req_arg|
         raise Error.new("required argument #{req_arg} not found") unless args.include?(req_arg)
-      end
-    end
+  end
+end
 
   private
   

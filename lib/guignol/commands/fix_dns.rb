@@ -30,8 +30,8 @@ require 'guignol/models/instance'
 
 module Guignol::Commands
   class FixDNS < Base
-    def run_on_server(config)
-      Guignol::Models::Instance.new(config).update_dns
+    def run_on_server(name, config)
+      Guignol::Models::Instance.new(name, config).update_dns
     end
 
     def self.short_usage

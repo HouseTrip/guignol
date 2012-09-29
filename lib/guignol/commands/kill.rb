@@ -32,7 +32,7 @@ module Guignol::Commands
   class Kill < Base
     def before_run
       return true if configs.empty?
-      names = configs.map { |config| config[:name] }.join(", ")
+      names = configs.keys.join(", ")
       confirm "Are you sure you want to destroy servers #{names}"
     end
 

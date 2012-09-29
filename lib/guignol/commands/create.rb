@@ -31,7 +31,7 @@ require 'guignol/models/instance'
 module Guignol::Commands
   class Create < Base
     def run_on_server(config)
-      Guignol::Models::Instance.new(config).create
+      Guignol::Models::Instance.new(name, config).create
     end
 
     def self.short_usage
