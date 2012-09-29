@@ -12,7 +12,7 @@ module Guignol::Logger
 
 
   def logger_file
-    return File.open(path,'a') if path = ENV['GUIGNOL_LOG'] 
+    return File.open(ENV['GUIGNOL_LOG'] ,'a') if ENV['GUIGNOL_LOG'] 
     $stdout.tty? ? $stdout : File.open('/dev/null','w')  
   end
 
