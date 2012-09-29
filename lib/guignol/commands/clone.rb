@@ -37,7 +37,7 @@ module Guignol::Commands
       @source_name = source_name
       @target_name = target_name
 
-      @source_config = Guignol.configuration.find { |config| config[:name] == source_name }
+      @source_config = Guignol.configuration[source_name]
       unless @source_config
         raise "machine '#{source_name}' is unknown"
       end

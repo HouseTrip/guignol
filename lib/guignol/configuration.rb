@@ -57,8 +57,8 @@ module Guignol::Configuration
     raise "Instance config lacks :name" unless data.collect_key(:name).all?
     result = data.index_by { |item| item.delete(:name) }
     result.each_pair do |name, config|
-      raise "Volume config lacks :name" unless config[:volumes].collect_key(:name).all?
       next unless config[:volumes]
+      raise "Volume config lacks :name" unless config[:volumes].collect_key(:name).all?
       config[:volumes] = config[:volumes].index_by { |item| item.delete(:name) }
     end
 

@@ -32,12 +32,12 @@ module Guignol::Commands
   class Stop < Base
     def before_run
       return true if configs.empty?
-      names = configs.map { |config| config[:name] }.join(", ")
+      names = configs.keys.join(", ")
       confirm "Are you sure you want to stop servers #{names}"
     end
 
-    def run_on_server(config)
-      Guignol::Models::Instance.new(config).stop
+    def run_on_server(name, config)
+      Guignol::Models::Instance.new(name, config).stop
     end
 
     def self.short_usage

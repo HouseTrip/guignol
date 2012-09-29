@@ -30,8 +30,8 @@ require 'guignol/models/instance'
 
 module Guignol::Commands
   class Start < Base
-    def run_on_server(config)
-      Guignol::Models::Instance.new(config).start
+    def run_on_server(name, config)
+      Guignol::Models::Instance.new(name, config).start
     end
 
     def self.short_usage

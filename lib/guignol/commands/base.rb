@@ -34,23 +34,21 @@ module Guignol::Commands
   class Base
 
     def initialize(*argv)
-      @configs = argv.map { |pattern| 
-        Guignol.configuration.select { |name,config|
-          name.to_s =~ /#{pattern}/
-        }
-      }.flatten.uniq
+      @configs = Guignol.configuration.delete_if { |name,config|
+        argv.none? { |pattern| name.to_s =~ /#{pattern}/ }
+      }
     end
 
     def run
       before_run or return if respond_to?(:before_run)
 
-      Parallel.each(@configs, :in_threads => @configs.size) do |config|
-        run_on_server(config)
+      Parallel.each(@configs, :in_threads => @configs.size) do |name,config|
+        run_on_server(name, config)
       end
     end
 
     protected
-    
+
     attr :configs
 
     def confirm(message)
