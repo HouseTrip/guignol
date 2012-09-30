@@ -3,7 +3,7 @@ require 'guignol/commands/base'
 require 'guignol/models/instance'
 
 Guignol::Shell.class_eval do
-  desc 'start PATTERNS', 'Start servers matching PATTERNS (unless they are running), attach volumes, and setup DNS records'
+  desc 'start PATTERNS', 'Start all instances matching PATTERNS, attach their volumes, and setup DNS records'
   def start(*patterns)
     if patterns.empty?
       raise Thor::Error.new('You must specify at least one PATTERN.')

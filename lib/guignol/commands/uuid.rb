@@ -3,7 +3,7 @@ require 'guignol/commands/base'
 require 'uuidtools'
 
 Guignol::Shell.class_eval do
-  desc 'uuid', 'Print random UUIDs'
+  desc 'uuid [COUNT]', 'Print random UUIDs'
   method_option :count,
     :aliases => %w(-c),
     :type => :numeric, :default => 1,

@@ -5,9 +5,23 @@ Be the puppeteer. Order your EC2 instances to start, stop, die, or be created fr
 Released under the [Simplified BSD License](http://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_.28.22Simplified_BSD_License.22_or_.22FreeBSD_License.22.29).
 
 
+    Guignol -- manipulate EC2 instances from your command line.
+
+    Tasks:
+      guignol clone SOURCE       # Print a new config similar to the server named SOURCE
+      guignol create PATTERNS    # Create and start all instances matching PATTERNS and their volumes
+      guignol execute COMMAND    # Execute a command over SSH on instances
+      guignol fixdns [PATTERNS]  # Make sure the DNS mappings are correct for servers matching PATTERNS
+      guignol help [TASK]        # Describe available tasks or one specific task
+      guignol kill PATTERNS      # Terminate all instances matching PATTERNS
+      guignol list [PATTERNS]    # List the status of all known instances
+      guignol start PATTERNS     # Start all instances matching PATTERNS, attach their volumes, and setup DNS records
+      guignol stop PATTERNS      # Stop all instances matching PATTERNS, and remove DNS records
+      guignol uuid [COUNT]       # Print random UUIDs
+
 ## Getting started
 
-Install `guignol`:
+Install Guignol:
 
     $ gem install guignol
 
@@ -19,13 +33,13 @@ Start by setting up your `~/.fog`:
       :aws_access_key_id:      ABCDEF....
       :aws_secret_access_key:  123456....
 
+Alternatively you can pass crendentials for Guignol by setting the `AWS_SECRET_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables, or by setting `:aws_access_key_id` and `:aws_secret_access_key` in `guignol.yml` (see below).
 
 
 ## Creating, starting and stopping machines
 
 Guignol doesn't care about the list of instances that live on your EC2 account,
 only what it's configured to deal with.
-
 This should prevent destroying other's instances when using (for instance) a
 shared AWS/IAM account !
 
@@ -38,7 +52,7 @@ instance):
     hello-world:
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
 
-Guignol will read it's configuration from the first file in the following list:
+Guignol will read its configuration from the first file in the following list:
 
 - the value of the `GUIGNOL_YML` environment variable,
 - `./guignol.yml`, `./config/guignol.yml`, `~/.guignol.yml`
@@ -62,7 +76,7 @@ You can log in as soon as the command returns.
 Of course, you can `stop`, `start`, or `kill` your instance.
 
 
-### One more thing
+### Parallel actions
 
 You can run any command against multiple instances by listing names and (ruby)
 regular expressions to designate lists of instances.
@@ -75,9 +89,34 @@ regular expressions to designate lists of instances.
 
 If targeting multiple machines, guignol will run **in parallel**.
 
+Parallelism is disabled on Ruby 1.9.3+, as it doesn't deal well with SSL connections in that case.
 
 
-## Optional configuration
+### EBS Volumes
+
+Yes, Guignol will also create and attach your EBS volumes when starting up instances.
+Just add a `:volumes` entry to your instance configuration:
+
+    :volumes:
+      - :name: fubar-swap
+        :uuid: 9D5A278E-432C-41DB-9FB5-8AF5C1BD021F
+        :dev:  /dev/sdf
+        :size: 4
+        :delete_on_termination: true
+      - :name: fubar-data
+        :uuid: E180203F-9DE1-4C6A-B09B-33B2FAC8F36E
+        :dev:  /dev/sdg
+        :size: 20
+        :delete_on_termination: false
+
+Guignol will take care of creating your instances in the right availability zone if its volumes already exist.
+
+Note that Guignol does not delete volumes when tearing down instances.
+
+
+
+
+## Optional instance configuration
 
 - `:domain`
   The machine's domain name. If specified, Guignol will setup a 
@@ -105,28 +144,8 @@ If targeting multiple machines, guignol will run **in parallel**.
 - `:user_data`
   A script to run when an instance is created.
 
-
-
-## EBS Volumes
-
-Yes, Guignol will also create and attach your EBS volumes when starting up instances.
-Just add a `:volumes` entry to your instance configuration:
-
-    :volumes:
-      - :name: fubar-swap
-        :uuid: 9D5A278E-432C-41DB-9FB5-8AF5C1BD021F
-        :dev:  /dev/sdf
-        :size: 4
-        :delete_on_termination: true
-      - :name: fubar-data
-        :uuid: E180203F-9DE1-4C6A-B09B-33B2FAC8F36E
-        :dev:  /dev/sdg
-        :size: 20
-        :delete_on_termination: false
-
-Guignol will take care of creating your instances in the right availability zone if its volumes already exist.
-
-Note that Guignol does not delete volumes when tearing down instances.
+- `:username`
+  Will be used for the SSH connection performed by the `execute` command.
 
 
 
@@ -144,6 +163,12 @@ Simply
 Now you can `guignol stop` your instances from the command line when not using them and save money.
 
 
+## Logging
+
+Guignol will log to standard output if it's a TTY, and be mostly silent otherwise.
+You can direct logging to a file of your choice by setting `GUIGNOL_LOG`.
+
+
 
 ## Complete config example
 
@@ -155,7 +180,7 @@ This one just contains 1 machine, `fubar.example.com.`
       :domain:              example.com.
       :uuid:                68C3C0C2-1BA3-465F-8626-E065E4EF9048
       :region:              eu-west-1
-      :image_id:            ami-15f7c961                            # 32 bits
+      :image_id:            ami-15f7c961
       :flavor_id:           m1.small
       :key_name:            john-doe
       :security_group_ids:  

@@ -1,7 +1,7 @@
 require 'guignol/commands/base'
 
 Guignol::Shell.class_eval do
-  desc 'list [PATTERNS]', 'List server statuses'
+  desc 'list [PATTERNS]', 'List the status of all known instances'
   def list(*patterns)
     patterns.push('.*') if patterns.empty?
     Guignol::Commands::List.new(patterns).run

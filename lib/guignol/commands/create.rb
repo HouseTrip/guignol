@@ -3,7 +3,7 @@ require 'guignol/commands/base'
 require 'guignol/models/instance'
 
 Guignol::Shell.class_eval do
-  desc 'create PATTERNS', 'Create instances matching PATTERNS and their volumes (unless they exist) then run start'
+  desc 'create PATTERNS', 'Create and start all instances matching PATTERNS and their volumes'
   def create(*patterns)
     if patterns.empty?
       raise Thor::Error.new('You must specify at least one PATTERN.')

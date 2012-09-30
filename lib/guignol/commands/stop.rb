@@ -3,7 +3,7 @@ require 'guignol/commands/base'
 require 'guignol/models/instance'
 
 Guignol::Shell.class_eval do
-  desc 'stop PATTERNS', 'Stop servers matching PATTERNS (if they are running) and remove DNS records'
+  desc 'stop PATTERNS', 'Stop all instances matching PATTERNS, and remove DNS records'
   def stop(*patterns)
     if patterns.empty?
       raise Thor::Error.new('You must specify at least one PATTERN.')

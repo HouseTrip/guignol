@@ -1,7 +1,7 @@
 require 'guignol/commands/base'
 
 Guignol::Shell.class_eval do
-  desc 'execute COMMAND', 'Execute a command on servers'
+  desc 'execute COMMAND', 'Execute a command over SSH on instances'
   method_option :on,
     :banner => 'PATTERNS',
     :type => :array, :default => ['.*'],

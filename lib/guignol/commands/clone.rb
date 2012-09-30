@@ -6,7 +6,7 @@ require 'yaml'
 
 
 Guignol::Shell.class_eval do
-  desc 'clone SOURCE', 'Print a new config similar to the server names SOURCE'
+  desc 'clone SOURCE', 'Print a new config similar to the server named SOURCE'
   method_option :name,
     :aliases => %w(-n),
     :type => :string, :default => 'new-server',
