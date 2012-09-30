@@ -13,6 +13,10 @@ module Guignol::Models
   class Instance < Base
     class Error < Exception; end
 
+    def initialize(name, options)
+      super
+      subject.username = options[:username] if options[:username] && exists?
+    end
 
     def fqdn
       name and domain and "#{name}.#{domain}"
@@ -22,7 +26,7 @@ module Guignol::Models
     def create
       log "server already exists" and return self if exist?
         
-      create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data)
+      create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data, :username)
 
       # check for pre-existing volume(s). if any exist, add their AZ to the server's options
       zones = create_options[:volumes].map { |name,volume_options| Volume.new(name, volume_options).availability_zone }.compact.uniq
