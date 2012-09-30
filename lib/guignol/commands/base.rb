@@ -1,95 +1,75 @@
-
-
-require 'guignol'
-require 'guignol/configuration'
+require 'thor'
 require 'pathname'
 require 'parallel'
+require 'guignol'
+require 'guignol/configuration'
+require 'guignol/models/instance'
 require 'core_ext/array/collect_key'
 
 module Guignol::Commands
   class Base
-    Error = Class.new(Exception)
-    NAMED_ARG_RE = /^--/
 
-    module ClassMethods
-      def ensure_args(*args)
-        @ensure_args ||= []
-        return @ensure_args if args.empty?
-        @ensure_args = args.flatten
-      end
-    end
-    extend ClassMethods
-
-
-    def initialize(*argv)
-      @argv = argv.flatten
-      @configs = Guignol.configuration.delete_if { |name,config|
-        servers.none? { |pattern| name.to_s =~ /#{pattern}/ }
-      }
-      ensure_args
+    def initialize(patterns, options = {})
+      @configs = select_configs(patterns)
+      @options = options
     end
 
+    # Run the block for each server in +configs+ (in parallel).
     def run
-      before_run or return if respond_to?(:before_run)
+      before_run(@configs) or return
+      results = {}
 
-      Parallel.each(@configs, :in_threads => @configs.size) do |name,config|
-        run_on_server(name, config)
+      Parallel.each(@configs, parallel_options) do |name,config|
+        instance = Guignol::Models::Instance.new(name, config)
+        results[name] = run_on_server(instance, @options)
       end
+
+      after_run(results)
     end
 
-    def servers
-      @servers ||= _servers
-    end
-    
-    def args
-      @args ||= _args
-    end
-    
-    def arg_val(arg_name)
-      return nil unless args.include?(arg_name)
-      next_arg(arg_name)
-    end
-    
-    def arg?(arg_name)
-      args.include?(arg_name)
-    end
-    
 
     protected
 
-    attr :configs
+    # Override in subclasses
+    def before_run(configs) ; true ; end
 
-    def confirm(message)
-      return true unless $stdin.tty?
-      $stdout.print "#{message}? [y/N] "
-      $stdout.flush
-      answer = $stdin.gets
-      return answer.strip =~ /y/i
+    # Override in subclasses
+    def after_run(data) ; true ; end
+
+
+    def shell
+      Guignol::Shell.shared_shell
     end
-    
-    def ensure_args
-      self.class.ensure_args.each do |req_arg|
-        raise Error.new("required argument #{req_arg} not found") unless args.include?(req_arg)
+
+
+    def synchronize
+      (@mutex ||= Mutex.new).synchronize do
+        yield
       end
     end
 
-  private
-  
-    def _servers
-      @argv - args
-    end
-    
-    def _args
-      @argv.dup.drop_while do |arg|
-        (arg =~ NAMED_ARG_RE).nil?
+
+    private
+
+
+    def parallel_options
+      if RUBY_VERSION >= '1.9.3'
+        # 1.9.3 has bugs with Excon / SSL connections
+        { :in_threads => 0 }
+      else
+        { :in_threads => @configs.size }
       end
     end
-    
-    def next_arg(arg_name)
-      index = args.index(arg_name)
-      arg_at = args[index + 1]
-      return nil if arg_at =~ NAMED_ARG_RE
-      arg_at
+
+    # Put all the servers matching one of the +names+ in +configs+.
+    def select_configs(patterns)
+      patterns = patterns.map { |pattern| 
+        pattern.kind_of?(String) ? Regexp.new(pattern) : pattern
+      }
+      Guignol.configuration.delete_if { |name,config| 
+        patterns.none? { |pattern| name.to_s =~ pattern }
+      }
     end
+
   end
 end

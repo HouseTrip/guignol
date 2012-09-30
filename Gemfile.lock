@@ -5,7 +5,7 @@ PATH
       active_support
       fog (~> 1.6.0)
       parallel (~> 0.5.14)
-      term-ansicolor
+      thor
       uuidtools
 
 GEM
@@ -56,7 +56,7 @@ GEM
     rspec-mocks (2.4.0)
     ruby-hmac (0.4.0)
     slop (3.3.3)
-    term-ansicolor (1.0.7)
+    thor (0.16.0)
     uuidtools (2.1.3)
 
 PLATFORMS

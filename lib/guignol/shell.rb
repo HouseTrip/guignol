@@ -1,24 +1,35 @@
-
-require 'term/ansicolor'
-require 'guignol/commands'
+require 'thor'
 
 module Guignol
-  class Shell
-    include Singleton
-
-    def execute(command_name, *argv)
-      command_name ||= 'help'
-      unless command = Commands::Map[command_name]
-        Commands::Help.new.run
-        die "no such command '#{command_name}'."
-      end
-      command.new(*argv).run
-      exit 0
+  class Shell < Thor
+    def help(*args)
+      shell.say
+      shell.say "Guignol -- manipulate EC2 instances from your command line.", :cyan
+      shell.say
+      super
     end
 
-    def die(message)
-      puts Term::ANSIColor.red("fatal: #{message}")
-      exit 1
+    def self.start
+      super(ARGV, :shell => shared_shell)
+    end
+
+    def self.shared_shell
+      @shared_shell ||= Thor::Base.shell.new
+    end
+
+    def self.exit_on_failure?
+      true
     end
   end
 end
+
+
+require 'guignol/commands/create'
+require 'guignol/commands/kill'
+require 'guignol/commands/start'
+require 'guignol/commands/stop'
+require 'guignol/commands/list'
+require 'guignol/commands/uuid'
+require 'guignol/commands/fix_dns'
+require 'guignol/commands/clone'
+require 'guignol/commands/execute'

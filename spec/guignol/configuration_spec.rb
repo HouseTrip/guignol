@@ -23,7 +23,6 @@ describe Guignol::Configuration do
     end
 
     it 'loads volumes' do
-      # require 'pry' ; require 'pry-nav' ; binding.pry
       result['john-mcfoo'][:volumes].should_not be_empty
     end
   end

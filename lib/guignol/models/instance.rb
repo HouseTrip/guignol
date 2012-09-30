@@ -1,7 +1,6 @@
 
 require 'yaml'
 require 'fog'
-require 'md5'
 require 'active_support/core_ext/hash/slice'
 require 'guignol'
 require 'guignol/models/base'
@@ -87,7 +86,7 @@ module Guignol::Models
 
 
     def destroy
-      return self unless exist?
+      log "server doesn't exist (ignoring)." and return self unless exist?
 
       log "tearing server down..."
       remove_dns

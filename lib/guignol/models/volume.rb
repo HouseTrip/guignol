@@ -48,6 +48,7 @@ module Guignol::Models
     def attach(server_id)
       exist? or create
       subject.reload
+
       if subject.server_id == server_id
         if subject.device == options[:dev]
           log "volume already attached"
@@ -57,6 +58,7 @@ module Guignol::Models
           raise Error.new('already attached')
         end
       end
+
       response = connection.attach_volume(server_id, subject.id, options[:dev])
       response.status == 200 or raise Error.new('failed to attach volume')
       update_tags
