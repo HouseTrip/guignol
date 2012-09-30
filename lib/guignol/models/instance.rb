@@ -25,7 +25,7 @@ module Guignol::Models
       create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data)
 
       # check for pre-existing volume(s). if any exist, add their AZ to the server's options
-      zones = create_options[:volumes].map { |volume_options| Volume.new(volume_options).availability_zone }.compact.uniq
+      zones = create_options[:volumes].map { |name,volume_options| Volume.new(name, volume_options).availability_zone }.compact.uniq
       if zones.size > 1
         raise "pre-existing volumes volumes are in different availability zones"
       elsif zones.size == 1
@@ -128,7 +128,7 @@ module Guignol::Models
 
 
     def default_options
-      { :volumes => [] }
+      { :volumes => {} }
     end
 
 
@@ -161,9 +161,9 @@ module Guignol::Models
 
 
     def update_volumes
-      options[:volumes].each do |options|
+      options[:volumes].each_pair do |name,options|
         options[:availability_zone] = subject.availability_zone
-        Volume.new(options).attach(subject.id)
+        Volume.new(name, options).attach(subject.id)
       end
     end
 
