@@ -7,7 +7,7 @@ describe Guignol::Configuration do
   let(:result) { subject.configuration }
 
   before do
-    ENV['GUIGNOL_YML'] = test_path
+    ENV['GUIGNOL_YML'] = test_path.to_s
     test_path.open('w') do |io|
       io.write config_data
     end
