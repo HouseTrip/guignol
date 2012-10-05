@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "fog", "~> 1.6.0"
   s.add_dependency "parallel", "~> 0.5.14"
-  s.add_dependency "active_support"
+  s.add_dependency "activesupport"
   s.add_dependency "uuidtools"
   s.add_dependency "thor"
 
