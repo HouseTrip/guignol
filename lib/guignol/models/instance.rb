@@ -1,4 +1,4 @@
-
+require 'erb'
 require 'yaml'
 require 'fog'
 require 'active_support/core_ext/hash/slice'
@@ -6,13 +6,22 @@ require 'guignol'
 require 'guignol/models/base'
 require 'guignol/models/volume'
 
-require 'pry'
-
 module Guignol::Models
   class Instance < Base
     class Error < Exception; end
 
+    class HashERB < OpenStruct
+      def parse(data)
+        ERB.new(data).result(binding)
+      end
+    end
+
     def initialize(name, options)
+      if options[:user_data]
+        options[:name] = name
+        options[:user_data] = HashERB.new(options).parse(options[:user_data])
+      end
+
       super
       subject.username = options[:username] if options[:username] && exists?
     end
@@ -24,7 +33,7 @@ module Guignol::Models
 
     def create
       log "server already exists" and return self if exist?
-        
+
       create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data, :username)
 
       # check for pre-existing volume(s). if any exist, add their AZ to the server's options

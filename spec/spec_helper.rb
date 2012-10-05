@@ -8,5 +8,7 @@ ENV['GUIGNOL_ENV'] = 'test'
 ENV['GUIGNOL_LOG'] = '/dev/null'
 
 RSpec.configure do |config|
-  # nib
+  config.before do
+    Fog::Mock.reset
+  end
 end

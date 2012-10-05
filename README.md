@@ -149,6 +149,23 @@ Note that Guignol does not delete volumes when tearing down instances.
 
 
 
+## "User data" boot script
+
+EC2 instances will run the script passed as `user_data` at boot time, letting you perform one-time setup.
+
+Guignol parses this setting through ERB, and lets your access the configuration hash.
+Possible use case:
+
+    # ~/.guignol.yml
+    --- 
+    hello-world:
+      :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
+      :domain: example.com
+      :user_data: |
+        #!/bin/sh
+        echo "<%= name %>.<%= domain %>" > /etc/hostname
+
+
 ## Managing existing instances
 
 

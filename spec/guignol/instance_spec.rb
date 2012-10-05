@@ -28,6 +28,12 @@ describe Guignol::Models::Instance do
     it 'should pass with minimal options' do
       subject
     end
+
+    it 'parses ERB in user data' do
+      options[:foo] = 'bar'
+      options[:user_data] = "foo=<%= foo %>,<%= name %>"
+      subject.options[:user_data].should == 'foo=bar,foobar'
+    end
   end
 
 
