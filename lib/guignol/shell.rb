@@ -14,7 +14,11 @@ module Guignol
     end
 
     def self.shared_shell
-      @shared_shell ||= Thor::Base.shell.new
+      @shared_shell ||= if $stdout.tty?
+        Thor::Shell::Color.new
+      else
+        Thor::Shell::Basic.new
+      end
     end
 
     def self.exit_on_failure?
