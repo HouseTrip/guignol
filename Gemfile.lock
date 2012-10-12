@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    guignol (0.3.2)
+    guignol (0.3.3)
       activesupport
       fog (~> 1.6.0)
       parallel (~> 0.5.14)
@@ -39,7 +39,7 @@ GEM
     net-ssh (2.6.0)
       jruby-pageant (>= 1.1.1)
     nokogiri (1.5.5)
-    parallel (0.5.18)
+    parallel (0.5.19)
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
