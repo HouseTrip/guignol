@@ -56,7 +56,7 @@ module Guignol::Models
     end
 
 
-    Interval = 200e-3
+    Interval = 1.0
     Timeout  = 300
 
 
