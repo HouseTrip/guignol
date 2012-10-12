@@ -109,8 +109,13 @@ module Guignol::Models
 
     def update_dns
       return unless options[:domain]
-      if subject.nil? || subject.state != 'running'
-        log "server not running, not updating DNS"
+      unless subject && %w(pending running).include?(subject.state)
+        log "server is #{subject ? subject.state : 'nil'}, not updating DNS"
+        return
+      end
+
+      unless subject.dns_name
+        log "server has no public DNS, not updating DNS"
         return
       end
       log "updating DNS"
