@@ -50,7 +50,7 @@ module Guignol::Commands
       print_output(instance.name, "#{e.message} (#{e.class.name})", :red)
     end
 
-    def before_run(configs)
+    def before_run(configs, options = {})
       @max_width = configs.keys.map(&:size).max
     end
 

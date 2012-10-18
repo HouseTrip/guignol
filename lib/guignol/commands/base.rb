@@ -24,17 +24,17 @@ module Guignol::Commands
         results[name] = run_on_server(instance, @options)
       end
 
-      after_run(results)
+      after_run(results, @options)
     end
 
 
     protected
 
     # Override in subclasses
-    def before_run(configs) ; true ; end
+    def before_run(configs, options) ; true ; end
 
     # Override in subclasses
-    def after_run(data) ; true ; end
+    def after_run(data, options) ; true ; end
 
 
     def shell
@@ -46,13 +46,6 @@ module Guignol::Commands
       (@mutex ||= Mutex.new).synchronize do
         yield
       end
-    end
-
-
-    def self.add_force_option
-      method_option :force,
-        :aliases => %w(-f), :type => :boolean, :default => false,
-        :desc => 'Do not ask for confirmation'
     end
 
     private
