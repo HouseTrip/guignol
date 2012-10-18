@@ -19,7 +19,7 @@ module Guignol::Commands
       end
     end
 
-    def before_run(configs)
+    def before_run(configs, options = {})
       @max_width = configs.keys.map(&:size).max
     end
 

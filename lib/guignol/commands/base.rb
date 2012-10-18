@@ -16,7 +16,7 @@ module Guignol::Commands
 
     # Run the block for each server in +configs+ (in parallel).
     def run
-      before_run(@configs) or return
+      before_run(@configs, @options) or return
       results = {}
 
       Parallel.each(@configs, parallel_options) do |name,config|
@@ -49,8 +49,13 @@ module Guignol::Commands
     end
 
 
-    private
+    def self.add_force_option
+      method_option :force,
+        :aliases => %w(-f), :type => :boolean, :default => false,
+        :desc => 'Do not ask for confirmation'
+    end
 
+    private
 
     def parallel_options
       if RUBY_VERSION >= '1.9.3'

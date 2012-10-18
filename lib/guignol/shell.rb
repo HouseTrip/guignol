@@ -24,6 +24,13 @@ module Guignol
     def self.exit_on_failure?
       true
     end
+
+
+    def self.add_force_option
+      method_option :force,
+        :aliases => %w(-f), :type => :boolean, :default => false,
+        :desc => 'Do not ask for confirmation'
+    end
   end
 end
 
