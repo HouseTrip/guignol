@@ -6,19 +6,20 @@ describe Guignol::Configuration do
   let(:test_path) { Pathname.new 'tmp/test.yml' }
   let(:result) { subject.configuration }
 
-  before do
-    ENV['GUIGNOL_YML'] = test_path.to_s
-    test_path.open('w') do |io|
-      io.write config_data
-    end
-  end
-
-  after do
-    test_path.delete
-  end
-
   shared_examples_for 'loaded config' do
+    before do
+      ENV['GUIGNOL_YML'] = test_path.to_s
+      test_path.open('w') do |io|
+        io.write config_data
+      end
+    end
+
+    after do
+      test_path.delete
+    end
+
     it 'should load' do
+      test_path.should exist
       result.should be_a_kind_of(Hash)
     end
 
