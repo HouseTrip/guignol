@@ -9,7 +9,7 @@ module Guignol
   module Connection
     def self.get(options)
       @connections ||= {}
-      @connections[options] ||= Fog::Compute.new(options)
+      @connections[options] ||= Fog::Compute.new(credentials.merge options)
     end
 
 
@@ -17,7 +17,7 @@ module Guignol
 
 
     # Find and return credentials
-    def credentials
+    def self.credentials
       if ENV['AWS_SECRET_KEY_ID'] && ENV['AWS_SECRET_ACCESS_KEY']
         {
           :aws_access_key_id     => ENV['AWS_SECRET_KEY_ID'],
