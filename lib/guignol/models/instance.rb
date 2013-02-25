@@ -135,7 +135,10 @@ module Guignol::Models
         end
       end
 
-      dns_zone.records.create(:name => fqdn, :type => 'CNAME', :value => subject.dns_name, :ttl => 5)
+      # Route53's API is not concurrently accessible
+      DNS_MUTEX.synchronize do
+        dns_zone.records.create(:name => fqdn, :type => 'CNAME', :value => subject.dns_name, :ttl => 5)
+      end
       log "#{fqdn} -> #{subject.dns_name}"
       return self
     end
@@ -147,6 +150,7 @@ module Guignol::Models
 
   private
 
+    DNS_MUTEX = Mutex.new
 
     def default_options
       { :volumes => {} }
@@ -215,7 +219,7 @@ module Guignol::Models
         unless dns_record_matches?(record)
           log "warning, while removing, DNS record exist but does not point to the current server"
         end
-        record.destroy
+        DNS_MUTEX.synchronize { record.destroy }
       end
 
       return self
