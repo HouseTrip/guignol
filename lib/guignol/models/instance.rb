@@ -140,6 +140,10 @@ module Guignol::Models
       return self
     end
 
+    def dns_name
+      subject && subject.dns_name
+    end
+
 
   private
 
