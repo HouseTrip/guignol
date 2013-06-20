@@ -51,8 +51,9 @@ module Guignol::Commands
     private
 
     def parallel_options
-      if RUBY_VERSION >= '1.9.3'
+      if RUBY_VERSION =~ /1\.9\.3/
         # 1.9.3 has bugs with Excon / SSL connections
+        # work in 1.8.7, 1.9.2, fixed in 2.0.0+
         { :in_threads => 0 }
       else
         { :in_threads => @configs.size }
