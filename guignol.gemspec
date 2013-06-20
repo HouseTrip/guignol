@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-nav"
 
 
-  s.add_dependency "fog", "~> 1.9.0"
+  s.add_dependency "fog", "~> 1.12.0"
   s.add_dependency "parallel", '~> 0.6.2'
   s.add_dependency "activesupport"
   s.add_dependency "uuidtools"
