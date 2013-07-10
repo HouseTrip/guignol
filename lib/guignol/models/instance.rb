@@ -34,10 +34,22 @@ module Guignol::Models
     def create
       log "server already exists" and return self if exist?
 
-      create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data, :username)
+      create_options = Guignol::DefaultServerOptions.merge options.slice(:image_id, :flavor_id, :key_name, :security_group_ids, :user_data, :username, :availability_zone)
+
+      zones = create_options[:volumes].map { |name,volume_options| Volume.new(name, volume_options).availability_zone }.compact.uniq
+      availability_zone = create_options[:availability_zone]
+
+      # check if provided availability_zone is valid
+      if availability_zone
+        unless availability_zone.match(connection.region)
+          raise "availability zone #{availability_zone} is not in the defined region #{connection.region}"
+        end
+        if zones.first && zones.first != availability_zone
+          raise "volume availability zone differs to configured server availability_zone"
+        end
+      end
 
       # check for pre-existing volume(s). if any exist, add their AZ to the server's options
-      zones = create_options[:volumes].map { |name,volume_options| Volume.new(name, volume_options).availability_zone }.compact.uniq
       if zones.size > 1
         raise "pre-existing volumes volumes are in different availability zones"
       elsif zones.size == 1
@@ -119,7 +131,7 @@ module Guignol::Models
         return
       end
       log "updating DNS"
-      
+
       unless dns_zone
         log "DNS zone does not exist"
         return self
@@ -246,7 +258,7 @@ module Guignol::Models
 
     def dns_record
       dns_zone.records.find { |record| record.name == fqdn }
-    end      
+    end
 
     def dns_record_matches?(record)
       !!record and record.value.any? { |dns_name| dns_name == subject.dns_name }
