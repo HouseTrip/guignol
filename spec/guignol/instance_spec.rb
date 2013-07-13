@@ -48,6 +48,17 @@ describe Guignol::Models::Instance do
       subject.create
     end
 
+    it 'does not break when providing an availibity zone' do
+      instance = described_class.new(name, options.merge(:availability_zone => 'eu-west-1c'))
+      expect { instance.create }.to_not raise_error
+    end
+
+    it 'does not allow an availability zone that does not match the region' do
+      instance = described_class.new(name, options.merge(:availability_zone => 'us-west-1a'))
+      expect { instance.create }.to raise_error('availability zone us-west-1a is not in the defined region eu-west-1')
+    end
+
+    it 'requires existing volumes to live in a given availability zone'
     it 'reuses existing volumes'
     it 'fails when existing volumes are in different zones'
 
