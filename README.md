@@ -126,6 +126,9 @@ Note that Guignol does not delete volumes when tearing down instances.
 - `:region`
   The EC2 region. Defaults to `eu-west-1`.
 
+- `:availability_zone`
+  The EC2 availability zone. Defaults to whatever Amazon chooses.
+
 - `:image_id`
   The AMI to use when creating this instance. Defaults to whatever Amazon defaults it to.
   
