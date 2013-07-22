@@ -98,12 +98,12 @@ Yes, Guignol will also create and attach your EBS volumes when starting up insta
 Just add a `:volumes` entry to your instance configuration:
 
     :volumes:
-      - :name: fubar-swap
+      fubar-swap:
         :uuid: 9D5A278E-432C-41DB-9FB5-8AF5C1BD021F
         :dev:  /dev/sdf
         :size: 4
         :delete_on_termination: true
-      - :name: fubar-data
+      fubar-data:
         :uuid: E180203F-9DE1-4C6A-B09B-33B2FAC8F36E
         :dev:  /dev/sdg
         :size: 20
@@ -131,13 +131,13 @@ Note that Guignol does not delete volumes when tearing down instances.
 
 - `:image_id`
   The AMI to use when creating this instance. Defaults to whatever Amazon defaults it to.
-  
+
 - `:flavor_id`
   The type of instance to start. Defaults to `t1.micro` (the one with a free tier).
-  
+
 - `:key_name`
   The keypair to deploy to this instance. Default to not deploying any for security reasons (meaning you probably won't be able to log in if unset, depending on the AMI you're using).
-  
+
 - `:security_group_ids`
   A list of security groups you want your instance to be a member of.
 
@@ -223,9 +223,9 @@ This one just contains 1 machine, `fubar.example.com.`
           export LOGGING=YES
           exec "$0" > /tmp/user_data.log 2>&1
         fi
-    
+
         mkswap -f /dev/xvdf > /dev/null && swapon /dev/xvdf
-    
+
         mount_data() {
           mount -t ext4 /dev/xvdg /mnt
         }
