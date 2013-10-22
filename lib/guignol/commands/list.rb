@@ -34,11 +34,6 @@ module Guignol::Commands
       synchronize { shell.say "#{instance.id} " }
     end
 
-    def after_run(data, options)
-      shell.say "\n"
-    end
-
-
     def before_run(configs, options = {})
       @max_width = configs.keys.map(&:size).max
     end
