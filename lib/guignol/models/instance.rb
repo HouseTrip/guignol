@@ -159,6 +159,10 @@ module Guignol::Models
       subject && subject.dns_name
     end
 
+    def id
+      return nil unless subject && subject.respond_to?(:id)
+      subject.id
+    end
 
   private
 
@@ -267,7 +271,7 @@ module Guignol::Models
 
 
 
-    # walks the connection for matching servers, return 
+    # walks the connection for matching servers, return
     # either the found server of nil
     def find_subject
       connection.servers.

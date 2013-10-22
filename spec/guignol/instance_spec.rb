@@ -68,6 +68,29 @@ describe Guignol::Models::Instance do
   end
 
 
+  describe "#id" do
+    it "returns nil when there is no 'subject' (server)" do
+      instance = Guignol::Models::Instance.new(name, options)
+      instance.stub(:subject).and_return(nil)
+
+      instance.id.should be_nil
+    end
+
+    it "returns the id when 'subject' has no id" do
+      instance = Guignol::Models::Instance.new(name, options)
+      instance.stub(:subject).and_return(double)
+
+      instance.id.should be_nil
+    end
+
+    it "returns the id when 'subject' exists and has an id" do
+      instance = Guignol::Models::Instance.new(name, options)
+      instance.stub(:subject).and_return(double(:id => 'i-123456'))
+
+      instance.id.should == 'i-123456'
+    end
+  end
+
   describe '#start' do
     it_should_behave_like 'server setup'
 
