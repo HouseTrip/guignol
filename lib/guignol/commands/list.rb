@@ -14,6 +14,9 @@ module Guignol::Commands
 
     def run_on_server(instance, options = {})
       synchronize do
+        id = instance.id || 'unknown'
+        shell.say id.ljust(@max_width)
+
         shell.say instance.name.ljust(@max_width + 1)
         shell.say instance.state, colorize(instance.state)
       end
