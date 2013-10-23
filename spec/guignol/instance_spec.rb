@@ -100,7 +100,10 @@ describe Guignol::Models::Instance do
   describe '#start' do
 
     it 'returns when the server does not exist' do
-      subject.start
+      instance = Guignol::Models::Instance.new(name, options)
+      instance.stub(:subject).and_return(nil)
+
+      instance.start.should be_nil
     end
 
     it 'returns with a server marked as "running"'
