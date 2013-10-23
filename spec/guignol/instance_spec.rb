@@ -110,7 +110,7 @@ describe Guignol::Models::Instance do
 
   describe '#destroy' do
     it 'should pass with minimal options' do
-      subject.destroy
+      expect { subject.destroy }.to_not raise_error
     end
   end
 end
