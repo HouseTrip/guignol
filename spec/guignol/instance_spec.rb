@@ -38,8 +38,19 @@ describe Guignol::Models::Instance do
 
 
   shared_examples_for 'server setup' do
-    it 'set server tags'
-    it 'configures DNS properly'
+    it 'set server tags' do
+      expected_tags = {'Name' => name, 'UUID' => options[:uuid]}
+
+      subject.connection.should_receive(:create_tags)
+        .with(anything, {'Domain' => nil}.merge(expected_tags))
+        .and_return(double(:status => 200))
+
+      subject.create
+    end
+
+    describe "updating DNS" do
+      it 'configures DNS properly'
+    end
   end
 
 
