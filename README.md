@@ -35,6 +35,20 @@ Start by setting up your `~/.fog`:
 
 Alternatively you can pass crendentials for Guignol by setting the `AWS_SECRET_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables, or by setting `:aws_access_key_id` and `:aws_secret_access_key` in `guignol.yml` (see below).
 
+## Listing instances
+
+    # list all instances available
+    guignol list
+
+    # list instances that match a particular pattern
+    guignol list web
+
+    # list instances with AWS identifiers
+    guignol list <pattern> --with_instance_ids
+
+    # list instance ids only in a format suitable for being passed to elba
+    guignol list <pattern> --elba
+
 
 ## Creating, starting and stopping machines
 
@@ -48,7 +62,7 @@ Each instance needs at least a name an a UUID (both will become tags on your
 instance):
 
     # ~/.guignol.yml
-    --- 
+    ---
     hello-world:
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
 
@@ -119,7 +133,7 @@ Note that Guignol does not delete volumes when tearing down instances.
 ## Optional instance configuration
 
 - `:domain`
-  The machine's domain name. If specified, Guignol will setup a 
+  The machine's domain name. If specified, Guignol will setup a
   CNAME in Route53 mapping *name*.*domain* to your EC2 instance where it
   starts it (and tear it down when stopping it.)
 
@@ -160,7 +174,7 @@ Guignol parses this setting through ERB, and lets your access the configuration 
 Possible use case:
 
     # ~/.guignol.yml
-    --- 
+    ---
     hello-world:
       :uuid: AF123799-3F55-4F0B-8E58-87C67A5977BA
       :domain: example.com
@@ -195,7 +209,7 @@ You can direct logging to a file of your choice by setting `GUIGNOL_LOG`.
 This one just contains 1 machine, `fubar.example.com.`
 
     # ~/.guignol.yml
-    --- 
+    ---
     fubar:
       :domain:              example.com.
       :uuid:                68C3C0C2-1BA3-465F-8626-E065E4EF9048
@@ -203,7 +217,7 @@ This one just contains 1 machine, `fubar.example.com.`
       :image_id:            ami-15f7c961
       :flavor_id:           m1.small
       :key_name:            john-doe
-      :security_group_ids:  
+      :security_group_ids:
         - sg-7e638abc
       :volumes:
         fubar-swap:
