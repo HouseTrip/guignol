@@ -36,8 +36,7 @@ describe Guignol::Models::Instance do
     end
   end
 
-
-  shared_examples_for 'server setup' do
+  describe '#create' do
     it 'set server tags' do
       expected_tags = {'Name' => name, 'UUID' => options[:uuid]}
 
@@ -51,10 +50,8 @@ describe Guignol::Models::Instance do
     describe "updating DNS" do
       it 'configures DNS properly'
     end
-  end
 
 
-  describe '#create' do
     it 'should pass with minimal options' do
       expect { subject.create }.to_not raise_error
     end
@@ -74,8 +71,6 @@ describe Guignol::Models::Instance do
     it 'fails when existing volumes are in different zones'
 
     it 'starts up the server'
-
-    it_should_behave_like 'server setup'
   end
 
 
@@ -103,7 +98,6 @@ describe Guignol::Models::Instance do
   end
 
   describe '#start' do
-    it_should_behave_like 'server setup'
 
     it 'returns when the server does not exist' do
       subject.start
