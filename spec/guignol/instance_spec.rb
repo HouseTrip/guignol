@@ -47,10 +47,10 @@ describe Guignol::Models::Instance do
       subject.create
     end
 
-    describe "updating DNS" do
-      it 'configures DNS properly'
+    it "configures DNS properly" do
+      subject.should_receive(:update_dns)
+      subject.create
     end
-
 
     it 'should pass with minimal options' do
       expect { subject.create }.to_not raise_error
