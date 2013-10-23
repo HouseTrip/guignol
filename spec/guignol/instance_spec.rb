@@ -26,7 +26,7 @@ describe Guignol::Models::Instance do
     end
 
     it 'should pass with minimal options' do
-      subject
+      expect { subject }.to_not raise_error
     end
 
     it 'parses ERB in user data' do
