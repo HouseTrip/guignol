@@ -9,11 +9,6 @@ describe Guignol::Models::Instance do
     :uuid => '948DB8E9-A356-4F66-8857-165FBDF5A71F'
   }}
 
-  before(:each) do
-    # connection = stub(:servers => [])
-    # Fog::Compute.stub(:new).and_return(connection)
-  end
-
   describe '#initialize' do
     it 'should require :uuid' do
       options.delete :uuid
@@ -107,7 +102,6 @@ describe Guignol::Models::Instance do
     end
 
     it 'returns with a server marked as "running"'
-
   end
 
 
