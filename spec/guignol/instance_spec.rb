@@ -45,7 +45,7 @@ describe Guignol::Models::Instance do
 
   describe '#create' do
     it 'should pass with minimal options' do
-      subject.create
+      expect { subject.create }.to_not raise_error
     end
 
     it 'does not break when providing an availibity zone' do
