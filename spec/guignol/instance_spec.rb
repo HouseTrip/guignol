@@ -9,11 +9,6 @@ describe Guignol::Models::Instance do
     :uuid => '948DB8E9-A356-4F66-8857-165FBDF5A71F'
   }}
 
-  before(:each) do
-    # connection = stub(:servers => [])
-    # Fog::Compute.stub(:new).and_return(connection)
-  end
-
   describe '#initialize' do
     it 'should require :uuid' do
       options.delete :uuid
@@ -26,7 +21,7 @@ describe Guignol::Models::Instance do
     end
 
     it 'should pass with minimal options' do
-      subject
+      expect { subject }.to_not raise_error
     end
 
     it 'parses ERB in user data' do
@@ -36,16 +31,24 @@ describe Guignol::Models::Instance do
     end
   end
 
-
-  shared_examples_for 'server setup' do
-    it 'set server tags'
-    it 'configures DNS properly'
-  end
-
-
   describe '#create' do
-    it 'should pass with minimal options' do
+    it 'set server tags' do
+      expected_tags = {'Name' => name, 'UUID' => options[:uuid]}
+
+      subject.connection.should_receive(:create_tags)
+        .with(anything, {'Domain' => nil}.merge(expected_tags))
+        .and_return(double(:status => 200))
+
       subject.create
+    end
+
+    it "configures DNS properly" do
+      subject.should_receive(:update_dns)
+      subject.create
+    end
+
+    it 'should pass with minimal options' do
+      expect { subject.create }.to_not raise_error
     end
 
     it 'does not break when providing an availibity zone' do
@@ -63,8 +66,6 @@ describe Guignol::Models::Instance do
     it 'fails when existing volumes are in different zones'
 
     it 'starts up the server'
-
-    it_should_behave_like 'server setup'
   end
 
 
@@ -92,20 +93,21 @@ describe Guignol::Models::Instance do
   end
 
   describe '#start' do
-    it_should_behave_like 'server setup'
 
     it 'returns when the server does not exist' do
-      subject.start
+      instance = Guignol::Models::Instance.new(name, options)
+      instance.stub(:subject).and_return(nil)
+
+      instance.start.should be_nil
     end
 
     it 'returns with a server marked as "running"'
-
   end
 
 
   describe '#destroy' do
     it 'should pass with minimal options' do
-      subject.destroy
+      expect { subject.destroy }.to_not raise_error
     end
   end
 end
