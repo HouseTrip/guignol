@@ -1,4 +1,4 @@
 
 module Guignol
-  VERSION = "0.3.9"
-end  
+  VERSION = "0.3.10"
+end
