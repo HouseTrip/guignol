@@ -5,9 +5,29 @@ Guignol::Shell.class_eval do
 
   option :elba, :type => :boolean, :aliases => :e
   option :with_instance_ids, :type => :boolean, :aliases => :i
+  option :remote, :type => :boolean, :aliases => :r
   def list(*patterns)
     patterns.push('.*') if patterns.empty?
-    Guignol::Commands::List.new(patterns, options).run
+
+    if options[:remote]
+      # require 'pry'; require 'pry-nav'; binding.pry
+      config = YAML.load(File.open(File.join(Dir.home, '.fog')))[:default]
+      client = Fog::Compute::AWS.new config.merge(:region => 'eu-west-1')
+
+      patterns = patterns.map { |pattern|
+        pattern.kind_of?(String) ? Regexp.new(pattern) : pattern
+      }
+
+      servers = client.servers.delete_if { |srv|
+        patterns.none? { |pattern| srv.tags["Name"] =~ pattern  }
+      }.map { |srv|
+        [srv.tags["Name"], srv.id]
+      }
+      servers = options[:elba] ? Array[servers.collect(&:last)] : servers
+      print_table servers
+    else
+      Guignol::Commands::List.new(patterns, options).run
+    end
   end
 end
 
