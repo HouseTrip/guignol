@@ -30,7 +30,7 @@ module Guignol::Commands
     end
 
     def output_elba_friendly_instance_ids(instance)
-      return if instance.id.blank?
+      return unless instance.id
       synchronize { shell.say "#{instance.id} " }
     end
 
