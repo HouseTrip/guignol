@@ -3,8 +3,9 @@ require 'guignol/commands/base'
 Guignol::Shell.class_eval do
   desc 'list [PATTERNS]', 'List the status of all known instances'
 
-  option :elba, :type => :boolean, :aliases => :e
-  option :with_instance_ids, :type => :boolean, :aliases => :i
+  option :porcelain, :type => :boolean, :aliases => %w(-p --elba -e)
+  option :with_instance_ids, :type => :boolean, :aliases => '-i'
+
   def list(*patterns)
     patterns.push('.*') if patterns.empty?
     Guignol::Commands::List.new(patterns, options).run
@@ -16,7 +17,7 @@ module Guignol::Commands
     private
 
     def run_on_server(instance, options = {})
-      return output_elba_friendly_instance_ids(instance) if options[:elba]
+      return output_porcelain_instance_ids(instance) if options[:porcelain]
 
       synchronize do
         if options[:with_instance_ids]
@@ -29,7 +30,7 @@ module Guignol::Commands
       end
     end
 
-    def output_elba_friendly_instance_ids(instance)
+    def output_porcelain_instance_ids(instance)
       return unless instance.id
       synchronize { shell.say "#{instance.id} " }
     end

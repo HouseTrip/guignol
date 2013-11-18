@@ -44,10 +44,10 @@ Alternatively you can pass crendentials for Guignol by setting the `AWS_SECRET_K
     guignol list web
 
     # list instances with AWS identifiers
-    guignol list <pattern> --with_instance_ids
+    guignol list <pattern> --with-instance-ids
 
-    # list instance ids only in a format suitable for being passed to elba
-    guignol list <pattern> --elba
+    # list instance ids only in a format suitable for being passed to `xargs` or `elba`
+    guignol list <pattern> --porcelain
 
 
 ## Creating, starting and stopping machines
