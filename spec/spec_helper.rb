@@ -11,6 +11,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = 'aws-password'
 
 RSpec.configure do |config|
   config.before do
-    Fog::Mock.reset    
+    Fog::Mock.reset
   end
 end

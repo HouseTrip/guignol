@@ -39,6 +39,11 @@ module Guignol::Models
       zones = create_options[:volumes].map { |name,volume_options| Volume.new(name, volume_options).availability_zone }.compact.uniq
       availability_zone = create_options[:availability_zone]
 
+      if options[:root_ebs_size]
+        raise "root_ebs_size have to be a number" unless options[:root_ebs_size].is_a? Integer
+        create_options[:block_device_mapping] = [{"DeviceName"=>"/dev/sda1", "Ebs.VolumeSize"=>options[:root_ebs_size], "Ebs.DeleteOnTermination"=>"true"}]
+      end
+
       # check if provided availability_zone is valid
       if availability_zone
         unless availability_zone.match(connection.region)
