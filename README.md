@@ -164,6 +164,8 @@ Note that Guignol does not delete volumes when tearing down instances.
 - `:username`
   Will be used for the SSH connection performed by the `execute` command.
 
+- `:root_ebs_size`
+  Create instance with a bigger root EBS volume
 
 
 ## "User data" boot script
@@ -217,6 +219,7 @@ This one just contains 1 machine, `fubar.example.com.`
       :image_id:            ami-15f7c961
       :flavor_id:           m1.small
       :key_name:            john-doe
+      :root_ebs_size:       30
       :security_group_ids:
         - sg-7e638abc
       :volumes:

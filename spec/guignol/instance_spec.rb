@@ -56,9 +56,19 @@ describe Guignol::Models::Instance do
       expect { instance.create }.to_not raise_error
     end
 
+    it 'does not break when providing a root ebs size' do
+      instance = described_class.new(name, options.merge(:root_ebs_size => 30))
+      expect { instance.create }.to_not raise_error
+    end
+
     it 'does not allow an availability zone that does not match the region' do
       instance = described_class.new(name, options.merge(:availability_zone => 'us-west-1a'))
       expect { instance.create }.to raise_error('availability zone us-west-1a is not in the defined region eu-west-1')
+    end
+
+    it 'does not allow a non numeric root ebs size' do
+      instance = described_class.new(name, options.merge(:root_ebs_size => 'foobar'))
+      expect { instance.create }.to raise_error
     end
 
     it 'requires existing volumes to live in a given availability zone'
