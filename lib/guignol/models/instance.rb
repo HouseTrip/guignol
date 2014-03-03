@@ -236,6 +236,8 @@ module Guignol::Models
           log "warning, while removing, DNS record exist but does not point to the current server"
         end
         DNS_MUTEX.synchronize { record.destroy }
+      else
+        log "Unable to find record."
       end
 
       return self
@@ -261,7 +263,7 @@ module Guignol::Models
     end
 
     def dns_record
-      dns_zone.records.find { |record| record.name == fqdn }
+      dns_zone.records.all!.find { |record| record.name == fqdn }
     end
 
     def dns_record_matches?(record)
