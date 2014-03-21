@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency "parallel", '~> 0.6.2'
   s.add_dependency "activesupport"
   s.add_dependency "uuidtools"
-  s.add_dependency "thor"
+  s.add_dependency "thor", '>= 0.15'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- spec/*`.split("\n")
