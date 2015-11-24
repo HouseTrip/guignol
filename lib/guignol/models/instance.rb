@@ -1,6 +1,7 @@
 require 'erb'
 require 'yaml'
-require 'fog'
+require 'ostruct'
+require 'fog/aws'
 require 'active_support/core_ext/hash/slice'
 require 'guignol'
 require 'guignol/models/base'
