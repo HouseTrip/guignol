@@ -1,6 +1,6 @@
 require 'rspec'
 require 'rspec/mocks'
-require 'fog'
+require 'fog/aws'
 
 Fog.mock!
 
