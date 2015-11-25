@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    guignol (0.3.14)
+    guignol (0.3.15)
       activesupport
       excon
       fog-aws
