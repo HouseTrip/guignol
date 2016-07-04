@@ -42,12 +42,14 @@ GEM
     ipaddress (0.8.0)
     json (1.8.3)
     method_source (0.8.2)
-    mini_portile2 (2.0.0)
+    mini_portile2 (2.1.0)
     minitest (5.8.3)
     multi_json (1.11.2)
-    nokogiri (1.6.7.2)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.8)
+      mini_portile2 (~> 2.1.0)
+      pkg-config (~> 1.1.7)
     parallel (0.6.5)
+    pkg-config (1.1.7)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -80,6 +82,3 @@ DEPENDENCIES
   pry-nav
   rake
   rspec (~> 2.13.0)
-
-BUNDLED WITH
-   1.10.6
